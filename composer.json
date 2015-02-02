@@ -1,0 +1,24 @@
+{
+    "name": "aacotroneo/laravel-saml2",
+    "description": "A laravel package for saml2 integration as a SP (service provider) based on OneLogin toolkit, which is much lightweight than simplesamlphp",
+    "authors": [
+        {
+            "name": "aacotroneo",
+            "email": "aacotroneo at gmail dot com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*",
+        "onelogin/php-saml": "2.3"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Aacotroneo\\LaravelSaml2\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}

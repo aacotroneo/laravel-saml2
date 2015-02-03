@@ -1,8 +1,9 @@
-<?php namespace Aacotroneo\LaravelSaml2;
+<?php
+namespace Aacotroneo\Saml2;
 
 use Illuminate\Support\ServiceProvider;
 
-class LaravelSaml2ServiceProvider extends ServiceProvider {
+class Saml2ServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -18,7 +19,9 @@ class LaravelSaml2ServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('aacotroneo/laravel-saml2');
+		$this->package('aacotroneo/saml2');
+
+        include __DIR__.'/../../routes.php';
 	}
 
 	/**

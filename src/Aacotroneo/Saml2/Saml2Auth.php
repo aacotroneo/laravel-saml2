@@ -6,6 +6,9 @@ use OneLogin_Saml2_Auth;
 use OneLogin_Saml2_Error;
 use OneLogin_Saml2_Utils;
 
+use Log;
+use Psr\Log\InvalidArgumentException;
+
 class Saml2Auth
 {
 
@@ -13,43 +16,62 @@ class Saml2Auth
      * @var \OneLogin_Saml2_Auth
      */
     protected $auth;
-    protected $uid_key;
+
+    protected $samlAssertion;
+
+    protected $redirectUrl; //not used right now. Handled in Laravel
+
 
     function __construct($config)
     {
-//        session_start();
         $this->auth = new OneLogin_Saml2_Auth($config);
-//        $this->uid_key = $uid_key;
-//        $this->id_key = $config[]
     }
 
+    /**
+     * @return bool if a valid user was fetched from the saml assertion this request.
+     */
     function isAuthenticated()
     {
-        return isset($_SESSION['samlUserdata']);
+        $auth = $this->auth;
+
+        return $auth->isAuthenticated();
     }
 
-    function getUserId()
+    /**
+     * The user info from the assertion
+     * @return Saml2User
+     */
+    function getSaml2User(){
+
+        return new Saml2User($this->auth);
+    }
+
+    /**
+     * Initiate a saml2 login flow. It will redirect! Before calling this, check if user is
+     * authenticated (here in saml2). That would be true when the assertion was received this request.
+     */
+    function login($returnTo = null)
     {
-        $attributes = $this->getAttributes();
-        return $attributes[$this->uid_key][0];
+        $auth = $this->auth;
+
+        $auth->login($returnTo);
     }
 
-    function getAttributes()
+    /**
+     * Initiate a saml2 logout flow. It will close session on all other SSO services. You should close
+     * local session if applicable.
+     */
+    function logout()
     {
-        $attributes = $_SESSION['samlUserdata'];
-        return $attributes;
+        $auth = $this->auth;
+
+        $auth->logout();
     }
 
-    function getRawSamlAssertion()
-    {
-        return isset($_SESSION['SAMLAssertion']) ? $_SESSION['SAMLAssertion'] : null;
-    }
-
-    function login()
-    {
-        $this->auth->login();
-    }
-
+    /**
+     * Porcess a Saml response (assertion consumer service)
+     * @throws \Exception when errors are encountered. This sould not happen in a normal flow.
+     */
     function acs()
     {
 
@@ -58,43 +80,49 @@ class Saml2Auth
 
         $auth->processResponse();
 
-
         $errors = $auth->getErrors();
 
         if (!empty($errors)) {
-            print_r('<p>' . implode(', ', $errors) . '</p>');
-            exit();
+            Log::error("Invalid saml response", $errors);
+            throw new \Exception("The saml assertion is not valid, please check the logs.");
         }
 
         if (!$auth->isAuthenticated()) {
-            echo "<p>Not authenticated</p>";
-            exit();
+            Log::error("Could not authenticate with the saml response. Something happened");
+            throw new \Exception("The saml assertion is not valid, please check the logs.");
         }
 
-        $_SESSION['samlUserdata'] = $auth->getAttributes();
-
-        $_SESSION['SAMLAssertion'] = $_POST['SAMLResponse']; //se lo robo al saml
 
         if (isset($_POST['RelayState']) && OneLogin_Saml2_Utils::getSelfURL() != $_POST['RelayState']) {
-            $auth->redirectTo($_POST['RelayState']);
+            $this->redirectUrl = $_POST['RelayState'];
         }
     }
 
+    /**
+     * Porcess a Saml response (assertion consumer service)
+     * @throws \Exception
+     */
     function sls()
     {
         $auth = $this->auth;
 
-        $auth->processSLO();
+        $keep_local_session = true; //we don't touch session here
+        $auth->processSLO($keep_local_session);
 
         $errors = $auth->getErrors();
 
-        if (empty($errors)) {
-            print_r('Sucessfully logged out');
-        } else {
-            print_r(implode(', ', $errors));
+        if (!empty($errors)) {
+            Log::error("Could not log out", $errors);
+            throw new \Exception("Could not log out");
         }
+
     }
 
+    /**
+     * Show metadata about the local sp. Use this to configure your saml2 IDP
+     * @return mixed xml string representing metadata
+     * @throws \InvalidArgumentException if metadata is not correctly set
+     */
     function getMetadata()
     {
         $auth = $this->auth;
@@ -105,11 +133,10 @@ class Saml2Auth
 
         if (empty($errors)) {
             return $metadata;
-//            header('Content-Type: text/xml');
-//            echo $metadata;
+
         } else {
 
-            throw new OneLogin_Saml2_Error(
+            throw new InvalidArgumentException(
                 'Invalid SP metadata: ' . implode(', ', $errors),
                 OneLogin_Saml2_Error::METADATA_SP_INVALID
             );

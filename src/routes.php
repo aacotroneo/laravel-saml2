@@ -2,7 +2,13 @@
 
 //Config::get('administrator::administrator.uri')
 Route::group(array('prefix' => '/saml'), function() {
-    //Admin Dashboard
+
+    Route::get('/logout', array(
+        'as' => 'saml_logout',
+        'uses' => 'Aacotroneo\Saml2\Controllers\Saml2Controller@logout',
+    ));
+
+
     Route::get('/metadata', array(
         'as' => 'saml_metadata',
         'uses' => 'Aacotroneo\Saml2\Controllers\Saml2Controller@metadata',

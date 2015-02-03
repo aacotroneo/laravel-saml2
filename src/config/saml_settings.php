@@ -1,5 +1,8 @@
 <?php
 
+//This is variable is an example - Just make sure that the urls in the 'idp' config are ok.
+$idp_host = 'http://idp_host/simplesaml';
+
 return $settings = array (
     // If 'strict' is True, then the PHP Toolkit will reject unsigned
     // or unencrypted messages if it expects them signed or encrypted
@@ -16,7 +19,7 @@ return $settings = array (
         // Specifies constraints on the name identifier to be used to
         // represent the requested subject.
         // Take a look on lib/Saml2/Constants.php to see the NameIdFormat supported
-        'NameIDFormat' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+        'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
 
         // Usually x509cert and privateKey of the SP are provided by files placed at
         // the certs folder. But we can also provide them with the following parameters
@@ -51,11 +54,11 @@ return $settings = array (
     // Identity Provider Data that we want connect with our SP
     'idp' => array (
         // Identifier of the IdP entity  (must be a URI)
-        'entityId' => 'http://localhost:8000/simplesaml/saml2/idp/metadata.php',
+        'entityId' => $idp_host.'/saml2/idp/metadata.php',
         // SSO endpoint info of the IdP. (Authentication Request protocol)
         'singleSignOnService' => array (
             // URL Target of the IdP where the SP will send the Authentication Request Message
-            'url' => 'http://localhost:8000/simplesaml/saml2/idp/SSOService.php',
+            'url' => $idp_host.'/saml2/idp/SSOService.php',
             // SAML protocol binding to be used when returning the <Response>
             // message.  Onelogin Toolkit supports for this endpoint the
             // HTTP-POST binding only
@@ -64,7 +67,7 @@ return $settings = array (
         // SLO endpoint info of the IdP.
         'singleLogoutService' => array (
             // URL Location of the IdP where the SP will send the SLO Request
-            'url' => 'http://localhost:8000/simplesaml/saml2/idp/SingleLogoutService.php',
+            'url' => $idp_host.'/saml2/idp/SingleLogoutService.php',
             // SAML protocol binding to be used when returning the <Response>
             // message.  Onelogin Toolkit supports for this endpoint the
             // HTTP-Redirect binding only

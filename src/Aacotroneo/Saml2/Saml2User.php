@@ -11,7 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
  * Class Saml2User
  * @package Aacotroneo\Saml2
  */
-class Saml2User {
+class Saml2User
+{
 
 
     protected $auth;

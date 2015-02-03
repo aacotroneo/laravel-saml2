@@ -41,7 +41,8 @@ class Saml2Auth
      * The user info from the assertion
      * @return Saml2User
      */
-    function getSaml2User(){
+    function getSaml2User()
+    {
 
         return new Saml2User($this->auth);
     }

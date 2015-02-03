@@ -1,7 +1,7 @@
 <?php
 
 //Config::get('administrator::administrator.uri')
-Route::group(array('prefix' => '/saml'), function() {
+Route::group(array('prefix' => '/saml'), function () {
 
     Route::get('/logout', array(
         'as' => 'saml_logout',

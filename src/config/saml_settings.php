@@ -3,7 +3,7 @@
 //This is variable is an example - Just make sure that the urls in the 'idp' config are ok.
 $idp_host = 'http://idp_host/simplesaml';
 
-return $settings = array (
+return $settings = array(
     // If 'strict' is True, then the PHP Toolkit will reject unsigned
     // or unencrypted messages if it expects them signed or encrypted
     // Also will reject the messages if not strictly follow the SAML
@@ -14,7 +14,7 @@ return $settings = array (
     'debug' => false,
 
     // Service Provider Data that we are deploying
-    'sp' => array (
+    'sp' => array(
 
         // Specifies constraints on the name identifier to be used to
         // represent the requested subject.
@@ -28,10 +28,10 @@ return $settings = array (
 
         //LARAVEL - You don't need to change anything else on the sp
         // Identifier of the SP entity  (must be a URI)
-        'entityId' => '',  //LARAVEL: This would be set to saml_metadata route
+        'entityId' => '', //LARAVEL: This would be set to saml_metadata route
         // Specifies info about where and how the <AuthnResponse> message MUST be
         // returned to the requester, in this case our SP.
-        'assertionConsumerService' => array (
+        'assertionConsumerService' => array(
             // URL Location where the <Response> from the IdP will be returned
             'url' => '', //LARAVEL: This would be set to saml_acs route
             // SAML protocol binding to be used when returning the <Response>
@@ -41,9 +41,9 @@ return $settings = array (
         ),
         // Specifies info about where and how the <Logout Response> message MUST be
         // returned to the requester, in this case our SP.
-        'singleLogoutService' => array (
+        'singleLogoutService' => array(
             // URL Location where the <Response> from the IdP will be returned
-            'url' => '',  //LARAVEL: This would be set to saml_sls route
+            'url' => '', //LARAVEL: This would be set to saml_sls route
             // SAML protocol binding to be used when returning the <Response>
             // message.  Onelogin Toolkit supports for this endpoint the
             // HTTP-Redirect binding only
@@ -52,22 +52,22 @@ return $settings = array (
     ),
 
     // Identity Provider Data that we want connect with our SP
-    'idp' => array (
+    'idp' => array(
         // Identifier of the IdP entity  (must be a URI)
-        'entityId' => $idp_host.'/saml2/idp/metadata.php',
+        'entityId' => $idp_host . '/saml2/idp/metadata.php',
         // SSO endpoint info of the IdP. (Authentication Request protocol)
-        'singleSignOnService' => array (
+        'singleSignOnService' => array(
             // URL Target of the IdP where the SP will send the Authentication Request Message
-            'url' => $idp_host.'/saml2/idp/SSOService.php',
+            'url' => $idp_host . '/saml2/idp/SSOService.php',
             // SAML protocol binding to be used when returning the <Response>
             // message.  Onelogin Toolkit supports for this endpoint the
             // HTTP-POST binding only
             'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
         ),
         // SLO endpoint info of the IdP.
-        'singleLogoutService' => array (
+        'singleLogoutService' => array(
             // URL Location of the IdP where the SP will send the SLO Request
-            'url' => $idp_host.'/saml2/idp/SingleLogoutService.php',
+            'url' => $idp_host . '/saml2/idp/SingleLogoutService.php',
             // SAML protocol binding to be used when returning the <Response>
             // message.  Onelogin Toolkit supports for this endpoint the
             // HTTP-Redirect binding only

@@ -1,9 +1,9 @@
 <?php
 
-return $advancedSettings = array (
+return $advancedSettings = array(
 
     // Security settings
-    'security' => array (
+    'security' => array(
 
         /** signatures and encryptions offered */
 
@@ -54,19 +54,19 @@ return $advancedSettings = array (
     ),
 
     // Contact information template, it is recommended to suply a technical and support contacts
-    'contactPerson' => array (
-        'technical' => array (
+    'contactPerson' => array(
+        'technical' => array(
             'givenName' => '',
             'emailAddress' => ''
         ),
-        'support' => array (
+        'support' => array(
             'givenName' => '',
             'emailAddress' => ''
         ),
     ),
 
     // Organization information template, the info in en_US lang is recomended, add more if required
-    'organization' => array (
+    'organization' => array(
         'en-US' => array(
             'name' => '',
             'displayname' => '',

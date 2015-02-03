@@ -1,20 +1,23 @@
 <?php
 
-namespace Aacotroneo\Saml2;
+namespace Aacotroneo\Saml2\Controllers;
 
+use Saml2Auth;
+use Controller;
+use Response;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Config;
 
 class Saml2Controller extends Controller {
 
 
     public function metadata(){
 
-        $config = Config::get('saml2::saml_settings');
+        $metadata = Saml2Auth::getMetadata();
+        $response = Response::make($metadata, 200);
 
+        $response->header('Content-Type', 'text/xml');
 
-        return print_r($config, true);
+        return $response;
     }
 
     public function acs(){

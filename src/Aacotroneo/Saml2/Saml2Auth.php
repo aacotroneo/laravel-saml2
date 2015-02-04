@@ -19,9 +19,6 @@ class Saml2Auth
 
     protected $samlAssertion;
 
-    protected $redirectUrl; //not used right now. Handled in Laravel
-
-
     function __construct($config)
     {
         $this->auth = new OneLogin_Saml2_Auth($config);
@@ -70,7 +67,7 @@ class Saml2Auth
     }
 
     /**
-     * Porcess a Saml response (assertion consumer service)
+     * Process a Saml response (assertion consumer service)
      * @throws \Exception when errors are encountered. This sould not happen in a normal flow.
      */
     function acs()
@@ -93,14 +90,10 @@ class Saml2Auth
             throw new \Exception("The saml assertion is not valid, please check the logs.");
         }
 
-
-        if (isset($_POST['RelayState']) && OneLogin_Saml2_Utils::getSelfURL() != $_POST['RelayState']) {
-            $this->redirectUrl = $_POST['RelayState'];
-        }
     }
 
     /**
-     * Porcess a Saml response (assertion consumer service)
+     * Process a Saml response (assertion consumer service)
      * @throws \Exception
      */
     function sls()
@@ -131,10 +124,9 @@ class Saml2Auth
         $metadata = $settings->getSPMetadata();
         $errors = $settings->validateMetadata($metadata);
 
-
         if (empty($errors)) {
-            return $metadata;
 
+            return $metadata;
         } else {
 
             throw new InvalidArgumentException(

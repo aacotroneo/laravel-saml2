@@ -4,7 +4,7 @@ namespace Aacotroneo\Saml2;
 
 use Input;
 use OneLogin_Saml2_Auth;
-use Symfony\Component\HttpFoundation\Request;
+use URL;
 
 /**
  * A simple class that represents the user that 'came' inside the saml2 assertion
@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Saml2User
 {
-
 
     protected $auth;
 
@@ -48,7 +47,17 @@ class Saml2User
      */
     function getRawSamlAssertion()
     {
-        return Input::get('SAMLResponse'); //rememeber this is only valid the request the assertion is received!!
+        return Input::get('SAMLResponse'); //just this request
+    }
+
+    function getIntendedUrl()
+    {
+        $relayState = Input::get('RelayState'); //just this request
+
+        if ($relayState && URL::full() !=$relayState) {
+
+            return $relayState;
+        }
     }
 
 } 

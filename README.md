@@ -67,13 +67,6 @@ Event::listen('saml2.loginRequestReceived', function(Saml2User $user)
     $laravelUser = //find user by ID or attribute
     //if it does not exist create it and go on  or show an error message
     Auth::login($laravelUser);
-    $redirectUrl = $user->getIntendedUrl(); //this is URL::full() in our example
-    if($redirectUrl !== null){
-        Redirect::to($redirectUrl);    
-    }else {
-        Redirect::to('/');
-    }
-    
 });
 ```
 ### Log out
@@ -90,8 +83,6 @@ Event::listen('saml2.logoutRequestReceived', function()
 {
     Auth::logout();
     //echo "bye, we logged out.";
-    //For case 2, logout() will redirect somewhere else. If we are here, it's case 1, so we can redirect elsewhere
-    Redirect::to('/public');
 });
 ```
 

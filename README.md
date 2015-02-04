@@ -1,46 +1,61 @@
-## Laravel-saml2
-A Laravel package for Saml2 integration as a SP (service provider) based on OneLogin toolkit, which is much 'simple' than 'simple'samlphp
+## Laravel 4 - Saml2
+A Laravel package for Saml2 integration as a SP (service provider) based on OneLogin toolkit, which is much lighter and easier to install than simplesamlphp SP. It doesn't need separate routes or session storage to work!
 
-The aim of this library is to be as simple as possible. We won't even mess with Laravel users or session, what would be the point of coupling those functionalities? But wait, that's easy to do in Laravel, and it will adapt to many use cases out of the box! (i.e I'm using it without users in my projects) 
+The aim of this library is to be as simple as possible. We won't mess with Laravel users, auth, session...  We prefer to limit ourselves to a concrete task. Ask the user to authenticate at the IDP and process the response. Same case for SLO requests.
 
 ### Usage
-When you want your user to login, just call `Saml2Auth::login()`. Just remember that it does not use any storage, so if you call it you got it. For example, check if user is not logged in Laravel before.
-```
-    if(Auth::check()){
-        return Response::make('hello' . Auth::getUser()->getAuthIdentifier());
-    }else {
-        Saml2Auth::login();
-    }
-```
 
-Only if you want to know, that will redirect the user to the IDP, and will came back to an endpoint the library adds at /saml2/acs. That will process the response and fire an event when is ready. So, next step is for you to handle the response.
-
-```
-Event::listen('saml2.loginRequestReceived', function(Saml2User $user)
+When you want your user to login, just call `Saml2Auth::login()`. Just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP wheather the user is logged in or not. For example, you can change the auth filter.
+```php
+Route::filter('auth', function()
 {
-    echo "welcome . " . print_r($user->getAttributes(), true);
-    echo "<br/>Your id is . " . print_r($user->getUserId(), true);
-    echo "<br/>Your assertion is . " . print_r(base64_decode($user->getRawSamlAssertion()), true);
+	if (Auth::guest())
+	{ 
+		return SAML2::login(URL::full()); //url is saved in RelayState
+		
+	}
 });
 ```
-In most cases you will just log the user into Laravel and redirect.
-```
-   $user = User::find ... //use $user->getUserId() or some attribute;
-   Auth::login($user);
-   //if it does not exist create it or show a message
+
+Only if you want to know, that will redirect the user to the IDP, and will came back to an endpoint the library serves at /saml2/acs. That will process the response and fire an event when is ready. So, next step for you is to handle the response.
+
+```php
+
+Event::listen('saml2.loginRequestReceived', function(Saml2User $user)
+{
+    //$user->getAttributes();
+    //$user->getUserId();
+    //base64_decode($user->getRawSamlAssertion();
+    $laravelUser = //find user by ID or attribute
+    //if it does not exist create it and go on  or show an error message
+    Auth::login($laravelUser);
+    $redirectUrl = $user->getIntendedUrl(); //this is URL::full() in our example
+    if($redirectUrl !== null){
+        Redirect::to($redirectUrl);    
+    }else {
+        Redirect::to('/');
+    }
+    
+});
 ```
 ### Log out
-Now there are two ways to log out. When the user logs out in your app you may send a Logout request to the IDP (which will in turn broadcast the logout to all other service providers), or when the users logs out in another service provider. For the first case just call `Saml2Auth::logout();` or redirect use the route 'saml_logout' which just does that. Do not close session inmediately as you need to receive a response from the IDP. For the latter case (and after calling logout()) you'll want to listen to the other event we fire.
+Now there are two ways the user can log out.
+ + 1 - By logging out in your app: In this case you 'should' notify the IDP first so it closes global session.
+ + 2 - By logging out of the global SSO Session. In this case the IDP will notify you on /saml2/slo enpoint (already provided)
+
+For case 1 call `Saml2Auth::logout();` or redirect the user to the route 'saml_logout' which does just that. Do not close session inmediately as you need to receive a response confirmation from the IDP (redirection). That response will be handled by the library at /saml2/sls and will fire an event for you to complete the operation.
+
+For case 2 you will only receive the event. Both cases 1 and 2 receive the same event. 
 
 ```
 Event::listen('saml2.logoutRequestReceived', function()
 {
     Auth::logout();
-    //if you logged out locally you can redirect here, if not Auth::logout() will redirect first
-    echo "bye, we logged out.";
+    //echo "bye, we logged out.";
+    //For case 2, logout() will redirect somewhere else. If we are here, it's case 1, so we can redirect elsewhere
+    Redirect::to('/public');
 });
 ```
-
 
 ## Installation - Composer
 
@@ -60,23 +75,27 @@ To install Saml2 as a Composer package to be used with Laravel 4, simply add thi
 
 Then publish the config file with `php artisan config:publish aacotroneo/laravel-saml2`. This will add the file `app/config/packages/aacotroneo/laravel-saml2/saml_settings.php`. This config is handled almost directly by  [one login](https://github.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary.
 
+### Configuration
 
-TO BE CONTINUED...
-## Exposed SAML2 Endpoints
+Once you publish your saml_settings.php to your own files, you need to configure your sp and IDP (remote server). The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are inyected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
 
-Take a look at the [routes](https://github.com/aacotroneo/laravel-saml2/blob/master/src/routes.php) this module add to laravel. You don't need to touch them
-### 
+Remember that you don't need to implement those routes, but you'll need to add them to your IDP configuration. For example, if you use simplesamlphp, add the following to /metadata/sp-remote.php
 
-
-
-
-
-$metadata['http://localhost:8000/usuarios/be/saml/metadata'] = array(
-    'AssertionConsumerService' => 'http://localhost:8000/usuarios/be/saml/acs',
-    'SingleLogoutService' => 'http://localhost:8000/usuarios/be/saml/sls',
+```php
+$metadata['http://laravel_url/saml/metadata'] = array(
+    'AssertionConsumerService' => 'http://laravel_url/saml/acs',
+    'SingleLogoutService' => 'http://laravel_url/saml/sls',
+    //the following two affect what the $Saml2user->getUserId() will return
     'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-    'simplesaml.nameidattribute' => 'uid'
+    'simplesaml.nameidattribute' => 'uid' 
 );
+```
+You can check that metadata if you actually navigate to 'http://laravel_url/saml/metadata'
+
+
+
+That's it. Feel free to ask any questions, make PR or suggestions, or open Issues.
+
 
 
 

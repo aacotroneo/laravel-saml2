@@ -1,5 +1,5 @@
 {
-    "name": "aacotroneo/saml2",
+    "name": "aacotroneo/laravel-saml2",
     "description": "A Laravel package for Saml2 integration as a SP (service provider) based on OneLogin toolkit, which is much lightweight than simplesamlphp",
     "authors": [
         {

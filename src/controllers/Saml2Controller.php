@@ -2,7 +2,9 @@
 
 namespace Aacotroneo\Saml2\Controllers;
 
+use Config;
 use Event;
+use Redirect;
 use Saml2Auth;
 use Controller;
 use Response;
@@ -35,6 +37,14 @@ class Saml2Controller extends Controller
         Saml2Auth::acs();
         $user = Saml2Auth::getSaml2User();
         Event::fire('saml2.loginRequestReceived', array($user));
+        $redirectUrl = $user->getIntendedUrl();
+
+        if($redirectUrl !== null){
+            return Redirect::to($redirectUrl);
+        }else {
+
+            return Redirect::to(Config::get('saml2::settings.loginRoute')); //may be set a configurable default
+        }
     }
 
     /**
@@ -46,6 +56,7 @@ class Saml2Controller extends Controller
     {
         Saml2Auth::sls();
         Event::fire('saml2.logoutRequestReceived');
+        return Redirect::to(Config::get('saml2::settings.logoutRoute')); //may be set a configurable default
     }
 
     /**
@@ -54,6 +65,7 @@ class Saml2Controller extends Controller
     public function logout()
     {
         Saml2Auth::logout();  //will actually end up in the sls endpoint
+        //does not return
     }
 
 }

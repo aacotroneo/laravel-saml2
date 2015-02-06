@@ -1,8 +1,6 @@
 <?php
 namespace Aacotroneo\Saml2;
 
-use Config;
-use Route;
 use URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,9 +21,11 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('aacotroneo/saml2');
-
         include __DIR__ . '/../../routes.php';
+
+        $this->publishes([
+            __DIR__.'/../../config/saml_settings.php' => config_path('saml_settings.php'),
+        ]);
     }
 
     /**
@@ -35,8 +35,9 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['saml2auth'] = $this->app->share(function ($app) {
-            $config = Config::get('saml2::saml_settings');
+
+        $this->app->singleton('Aacotroneo\Saml2\Saml2Auth', function ($app) {
+            $config = config('saml_settings');
 
             $config['sp']['entityId'] = URL::route('saml_metadata');
 
@@ -47,10 +48,6 @@ class Saml2ServiceProvider extends ServiceProvider
             return new \Aacotroneo\Saml2\Saml2Auth($config);
         });
 
-        $this->app->booting(function () {
-            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-            $loader->alias('Saml2Auth', 'Aacotroneo\Saml2\Facades\Saml2Auth');
-        });
     }
 
     /**

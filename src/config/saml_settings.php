@@ -4,6 +4,30 @@
 $idp_host = 'http://localhost:8000/simplesaml';
 
 return $settings = array(
+    /*****
+     * Cosmetic settings - controller routes
+     **/
+    'routesPrefix' => '/saml2',
+
+    /**
+     * Where to redirect after logout
+     */
+    'logoutRoute' => '/',
+
+    /**
+     * Where to redirect after login if no other option was provided
+     */
+    'loginRoute' => '/',
+
+
+
+
+    /*****
+     * One Loign Settings
+     */
+
+
+
     // If 'strict' is True, then the PHP Toolkit will reject unsigned
     // or unencrypted messages if it expects them signed or encrypted
     // Also will reject the messages if not strictly follow the SAML

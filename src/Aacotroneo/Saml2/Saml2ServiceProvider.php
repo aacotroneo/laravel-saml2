@@ -21,10 +21,12 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        include __DIR__ . '/../../routes.php';
+        if(config('saml2_settings.useRoutes', false) == true ){
+            include __DIR__ . '/../../routes.php';
+        }
 
         $this->publishes([
-            __DIR__.'/../../config/saml_settings.php' => config_path('saml_settings.php'),
+            __DIR__.'/../../config/saml2_settings.php' => config_path('saml2_settings.php'),
         ]);
     }
 
@@ -37,7 +39,7 @@ class Saml2ServiceProvider extends ServiceProvider
     {
 
         $this->app->singleton('Aacotroneo\Saml2\Saml2Auth', function ($app) {
-            $config = config('saml_settings');
+            $config = config('saml2_settings');
 
             $config['sp']['entityId'] = URL::route('saml_metadata');
 

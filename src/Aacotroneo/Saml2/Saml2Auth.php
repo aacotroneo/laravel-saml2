@@ -19,9 +19,9 @@ class Saml2Auth
 
     protected $samlAssertion;
 
-    function __construct($config)
+    function __construct(OneLogin_Saml2_Auth $auth)
     {
-        $this->auth = new OneLogin_Saml2_Auth($config);
+        $this->auth = $auth;
     }
 
     /**
@@ -40,7 +40,6 @@ class Saml2Auth
      */
     function getSaml2User()
     {
-
         return new Saml2User($this->auth);
     }
 
@@ -68,7 +67,7 @@ class Saml2Auth
 
     /**
      * Process a Saml response (assertion consumer service)
-     * @throws \Exception when errors are encountered. This sould not happen in a normal flow.
+     * When errors are encountered, it returns an array with proper description
      */
     function acs()
     {
@@ -81,20 +80,20 @@ class Saml2Auth
         $errors = $auth->getErrors();
 
         if (!empty($errors)) {
-            Log::error("Invalid saml response", $errors);
-            throw new \Exception("The saml assertion is not valid, please check the logs.");
+            return $errors;
         }
 
         if (!$auth->isAuthenticated()) {
-            Log::error("Could not authenticate with the saml response. Something happened");
-            throw new \Exception("The saml assertion is not valid, please check the logs.");
+            return array('error' => 'Could not authenticate');
         }
+
+        return null;
 
     }
 
     /**
      * Process a Saml response (assertion consumer service)
-     * @throws \Exception
+     * returns an array with errors if it can not logout
      */
     function sls()
     {
@@ -105,11 +104,7 @@ class Saml2Auth
 
         $errors = $auth->getErrors();
 
-        if (!empty($errors)) {
-            Log::error("Could not log out", $errors);
-            throw new \Exception("Could not log out");
-        }
-
+        return $errors;
     }
 
     /**

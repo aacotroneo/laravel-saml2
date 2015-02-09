@@ -15,6 +15,9 @@
         "illuminate/support": "5.0.*",
         "onelogin/php-saml": "2.3"
     },
+    "require-dev": {
+        "mockery/mockery": "0.9.*"
+    },
     "autoload": {
         "psr-0": {
             "Aacotroneo\\Saml2\\": "src/"

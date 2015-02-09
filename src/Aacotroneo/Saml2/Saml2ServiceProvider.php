@@ -1,6 +1,7 @@
 <?php
 namespace Aacotroneo\Saml2;
 
+use OneLogin_Saml2_Auth;
 use URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -47,7 +48,9 @@ class Saml2ServiceProvider extends ServiceProvider
 
             $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
 
-            return new \Aacotroneo\Saml2\Saml2Auth($config);
+            $auth = new OneLogin_Saml2_Auth($config);
+
+            return new \Aacotroneo\Saml2\Saml2Auth($auth);
         });
 
     }

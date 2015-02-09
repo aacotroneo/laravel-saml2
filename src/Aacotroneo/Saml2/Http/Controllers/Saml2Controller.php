@@ -8,8 +8,10 @@ use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
 use Config;
 use Event;
+use Log;
 use Redirect;
 use Response;
+use Session;
 
 
 class Saml2Controller extends Controller
@@ -47,16 +49,22 @@ class Saml2Controller extends Controller
      */
     public function acs()
     {
-        $this->saml2Auth->acs();
+        $errors = $this->saml2Auth->acs();
+
+        if (!empty($errors)) {
+            Log::error('Saml2 error', $errors);
+            Session::flash('saml2_error', $errors);
+            return Redirect::to(config('saml2_settings.errorRoute'));
+        }
         $user = $this->saml2Auth->getSaml2User();
 
         Event::fire(new Saml2LoginEvent($user));
 
         $redirectUrl = $user->getIntendedUrl();
 
-        if($redirectUrl !== null){
+        if ($redirectUrl !== null) {
             return Redirect::to($redirectUrl);
-        }else {
+        } else {
 
             return Redirect::to(config('saml2_settings.loginRoute')); //may be set a configurable default
         }
@@ -69,7 +77,11 @@ class Saml2Controller extends Controller
      */
     public function sls()
     {
-        $this->saml2Auth->sls();
+        $error = $this->saml2Auth->sls();
+        if (!empty($error)) {
+            throw new \Exception("Could not log out");
+        }
+
         Event::fire(new Saml2LogoutEvent());
         return Redirect::to(Config::get('saml2::settings.logoutRoute')); //may be set a configurable default
     }
@@ -79,7 +91,7 @@ class Saml2Controller extends Controller
      */
     public function logout()
     {
-        $this->saml2Auth->logout();  //will actually end up in the sls endpoint
+        $this->saml2Auth->logout(); //will actually end up in the sls endpoint
         //does not return
     }
 

@@ -23,6 +23,12 @@ return $settings = array(
     'loginRoute' => '/',
 
 
+    /**
+     * Where to redirect after login if no other option was provided
+     */
+    'errorRoute' => '/',
+
+
 
 
     /*****

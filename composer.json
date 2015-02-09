@@ -16,9 +16,6 @@
         "onelogin/php-saml": "2.3"
     },
     "autoload": {
-        "classmap": [
-            "src/controllers"
-        ],
         "psr-0": {
             "Aacotroneo\\Saml2\\": "src/"
         }

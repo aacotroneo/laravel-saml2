@@ -1,11 +1,16 @@
 <?php
 
-//Config::get('saml2::settings.routesPrefix')
-Route::group(array('prefix' => 'saml'), function () {
+
+Route::group(array('prefix' => config('saml2_settings.routesPrefix')), function () {
 
     Route::get('/logout', array(
         'as' => 'saml_logout',
         'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout',
+    ));
+
+    Route::get('/login', array(
+        'as' => 'saml_login',
+        'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@login',
     ));
 
     Route::get('/metadata', array(

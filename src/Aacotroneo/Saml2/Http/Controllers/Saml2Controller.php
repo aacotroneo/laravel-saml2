@@ -71,7 +71,6 @@ class Saml2Controller extends Controller
     {
         $this->saml2Auth->sls();
         Event::fire(new Saml2LogoutEvent());
-        Event::fire('saml2.logoutRequestReceived');
         return Redirect::to(Config::get('saml2::settings.logoutRoute')); //may be set a configurable default
     }
 
@@ -82,6 +81,15 @@ class Saml2Controller extends Controller
     {
         $this->saml2Auth->logout();  //will actually end up in the sls endpoint
         //does not return
+    }
+
+
+    /**
+     * This initiates a login request
+     */
+    public function login()
+    {
+        $this->saml2Auth->login(URL::full());
     }
 
 }

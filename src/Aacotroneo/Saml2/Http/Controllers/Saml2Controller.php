@@ -66,7 +66,7 @@ class Saml2Controller extends Controller
             return Redirect::to($redirectUrl);
         } else {
 
-            return Redirect::to(config('saml2_settings.loginRoute')); //may be set a configurable default
+            return Redirect::to(config('saml2_settings.loginRoute')); 
         }
     }
 
@@ -101,7 +101,7 @@ class Saml2Controller extends Controller
      */
     public function login()
     {
-        $this->saml2Auth->login(URL::full());
+        $this->saml2Auth->login(config('saml2_settings.loginRoute'));
     }
 
 }

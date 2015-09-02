@@ -57,7 +57,7 @@ return $settings = array(
         // Usually x509cert and privateKey of the SP are provided by files placed at
         // the certs folder. But we can also provide them with the following parameters
         'x509cert' => '',
-        'privateKey' > '',
+        'privateKey' => '',
 
         //LARAVEL - You don't need to change anything else on the sp
         // Identifier of the SP entity  (must be a URI)

@@ -3,7 +3,6 @@
 namespace Aacotroneo\Saml2\Http\Controllers;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
-use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
 use Config;
@@ -82,7 +81,6 @@ class Saml2Controller extends Controller
             throw new \Exception("Could not log out");
         }
 
-        Event::fire(new Saml2LogoutEvent());
         return Redirect::to(Config::get('saml2::settings.logoutRoute')); //may be set a configurable default
     }
 

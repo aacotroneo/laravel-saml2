@@ -4,10 +4,9 @@ namespace Aacotroneo\Saml2;
 
 use OneLogin_Saml2_Auth;
 use OneLogin_Saml2_Error;
-use OneLogin_Saml2_Utils;
 
 use Log;
-use Psr\Log\InvalidArgumentException;
+use InvalidArgumentException;
 
 class Saml2Auth
 {
@@ -17,8 +16,6 @@ class Saml2Auth
      */
     protected $auth;
 
-    protected $samlAssertion;
-
     function __construct(OneLogin_Saml2_Auth $auth)
     {
         $this->auth = $auth;
@@ -27,7 +24,7 @@ class Saml2Auth
     /**
      * @return bool if a valid user was fetched from the saml assertion this request.
      */
-    function isAuthenticated()
+    public function isAuthenticated()
     {
         $auth = $this->auth;
 
@@ -36,9 +33,10 @@ class Saml2Auth
 
     /**
      * The user info from the assertion
+     *
      * @return Saml2User
      */
-    function getSaml2User()
+    public function getSaml2User()
     {
         return new Saml2User($this->auth);
     }
@@ -46,8 +44,10 @@ class Saml2Auth
     /**
      * Initiate a saml2 login flow. It will redirect! Before calling this, check if user is
      * authenticated (here in saml2). That would be true when the assertion was received this request.
+     *
+     * @param string $returnTo page return to
      */
-    function login($returnTo = null)
+    public function login($returnTo = null)
     {
         $auth = $this->auth;
 
@@ -55,10 +55,10 @@ class Saml2Auth
     }
 
     /**
-     * Initiate a saml2 logout flow. It will close session on all other SSO services. You should close
-     * local session if applicable.
+     * Initiate a saml2 logout flow. It will close session on all other SSO services.
+     * You should close local session if applicable.
      */
-    function logout()
+    public function logout()
     {
         $auth = $this->auth;
 
@@ -68,11 +68,11 @@ class Saml2Auth
     /**
      * Process a Saml response (assertion consumer service)
      * When errors are encountered, it returns an array with proper description
+     *
+     * @return array|null return array with proper error description.
      */
-    function acs()
+    public function acs()
     {
-
-        /** @var $auth OneLogin_Saml2_Auth */
         $auth = $this->auth;
 
         $auth->processResponse();
@@ -93,9 +93,10 @@ class Saml2Auth
 
     /**
      * Process a Saml response (assertion consumer service)
-     * returns an array with errors if it can not logout
+     *
+     * @return array array with errors if it cannot logout.
      */
-    function sls()
+    public function sls()
     {
         $auth = $this->auth;
 
@@ -109,10 +110,10 @@ class Saml2Auth
 
     /**
      * Show metadata about the local sp. Use this to configure your saml2 IDP
-     * @return mixed xml string representing metadata
+     * @return string xml string representing metadata
      * @throws \InvalidArgumentException if metadata is not correctly set
      */
-    function getMetadata()
+    public function getMetadata()
     {
         $auth = $this->auth;
         $settings = $auth->getSettings();

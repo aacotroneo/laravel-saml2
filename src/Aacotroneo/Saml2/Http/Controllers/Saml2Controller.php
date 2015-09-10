@@ -22,7 +22,7 @@ class Saml2Controller extends Controller
     /**
      * @param Saml2Auth $saml2Auth injected.
      */
-    function __construct(Saml2Auth $saml2Auth)
+    public function __construct(Saml2Auth $saml2Auth)
     {
         $this->saml2Auth = $saml2Auth;
     }

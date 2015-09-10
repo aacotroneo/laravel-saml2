@@ -50,7 +50,7 @@ class Saml2ServiceProvider extends ServiceProvider
 
             $auth = new OneLogin_Saml2_Auth($config);
 
-            return new \Aacotroneo\Saml2\Saml2Auth($auth);
+            return new Saml2Auth($auth);
         });
 
     }

@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/aacotroneo/laravel-saml2.svg)](https://travis-ci.org/aacotroneo/laravel-saml2)
 
-A Laravel package for Saml2 integration as a SP (service provider) based on OneLogin toolkit, which is much lighter and easier to install than simplesamlphp SP. It doesn't need separate routes or session storage to work!
+A Laravel package for Saml2 integration as a SP (service provider) based on  [OneLogin](https://github.com/onelogin/php-saml) toolkit, which is much lighter and easier to install than simplesamlphp SP. It doesn't need separate routes or session storage to work!
 
 The aim of this library is to be as simple as possible. We won't mess with Laravel users, auth, session...  We prefer to limit ourselves to a concrete task. Ask the user to authenticate at the IDP and process the response. Same case for SLO requests.
 
@@ -29,7 +29,7 @@ To install Saml2 as a Composer package to be used with Laravel 4, simply add thi
 ]
 ```
 
-Then publish the config file with `php artisan vendor:publish`. This will add the file `app/config/saml2_settings.php`. This config is handled almost directly by  [one login](https://github.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary. There are some other config about routes you may want to check, they are pretty strightforward.
+Then publish the config file with `php artisan vendor:publish`. This will add the file `app/config/saml2_settings.php`. This config is handled almost directly by  [OneLogin](https://github.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary. There are some other config about routes you may want to check, they are pretty strightforward.
 
 ### Configuration
 

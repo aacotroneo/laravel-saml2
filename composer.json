@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": ">=5.0.0",
+        "illuminate/support": "~5.1",
         "onelogin/php-saml": "2.6.1"
     },
     "require-dev": {

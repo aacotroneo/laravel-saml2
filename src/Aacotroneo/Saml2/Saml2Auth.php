@@ -55,15 +55,17 @@ class Saml2Auth
         $auth->login($returnTo);
     }
 
+
+
     /**
      * Initiate a saml2 logout flow. It will close session on all other SSO services. You should close
      * local session if applicable.
      */
-    function logout()
+    function logout($returnTo = null, $parameters = array(), $nameId = null, $sessionIndex = null)
     {
         $auth = $this->auth;
 
-        $auth->logout();
+        $auth->logout($returnTo = null, $parameters = array(), $nameId = null, $sessionIndex = null);
     }
 
     /**
@@ -133,8 +135,14 @@ class Saml2Auth
             throw new InvalidArgumentException(
                 'Invalid SP metadata: ' . implode(', ', $errors),
                 OneLogin_Saml2_Error::METADATA_SP_INVALID
-            );
+            );/
         }
+    }
+
+    function getSessionIndex()
+    {
+        return (new \Saml2Response())->getSessionIndex();
+
     }
 
 

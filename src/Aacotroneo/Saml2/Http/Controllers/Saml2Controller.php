@@ -81,7 +81,7 @@ class Saml2Controller extends Controller
             throw new \Exception("Could not log out");
         }
 
-        return Redirect::to(Config::get('saml2::settings.logoutRoute')); //may be set a configurable default
+        return Redirect::to(config('saml2_settings.logoutRoute')); //may be set a configurable default
     }
 
     /**

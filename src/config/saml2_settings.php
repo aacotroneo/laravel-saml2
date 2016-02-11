@@ -13,6 +13,12 @@ return $settings = array(
     'routesPrefix' => '/saml2',
 
     /**
+     * which middleware group to use for the saml routes
+     * Laravel 5.2 will need a group which includes StartSession
+     */
+    'routesMiddleware' => [],
+
+    /**
      * Where to redirect after logout
      */
     'logoutRoute' => '/',

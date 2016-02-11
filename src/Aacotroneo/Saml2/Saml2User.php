@@ -47,14 +47,14 @@ class Saml2User
      */
     function getRawSamlAssertion()
     {
-        return Input::get('SAMLResponse'); //just this request
+        return input('SAMLResponse'); //just this request
     }
 
     function getIntendedUrl()
     {
-        $relayState = Input::get('RelayState'); //just this request
+        $relayState = input('RelayState'); //just this request
 
-        if ($relayState && URL::full() !=$relayState) {
+        if ($relayState && url()->full() != $relayState) {
 
             return $relayState;
         }

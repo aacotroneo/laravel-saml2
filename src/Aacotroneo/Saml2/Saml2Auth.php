@@ -96,7 +96,7 @@ class Saml2Auth
      * Process a Saml response (assertion consumer service)
      * returns an array with errors if it can not logout
      */
-    function sls()
+    function sls($retrieveParametersFromServer = false)
     {
         $auth = $this->auth;
 
@@ -106,7 +106,7 @@ class Saml2Auth
             event(new Saml2LogoutEvent());
         };
 
-        $auth->processSLO($keep_local_session, null, false, $session_callback);
+        $auth->processSLO($keep_local_session, null, $retrieveParametersFromServer, $session_callback);
 
         $errors = $auth->getErrors();
 

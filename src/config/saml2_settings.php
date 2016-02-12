@@ -19,6 +19,12 @@ return $settings = array(
     'routesMiddleware' => [],
 
     /**
+     * Indicates how the parameters will be
+     * retrieved from the sls request for signature validation
+     */
+    'retrieveParametersFromServer' => false,
+
+    /**
      * Where to redirect after logout
      */
     'logoutRoute' => '/',

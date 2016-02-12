@@ -8,6 +8,7 @@ use OneLogin_Saml2_Utils;
 use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 
 use Log;
+use Session;
 use Psr\Log\InvalidArgumentException;
 
 class Saml2Auth

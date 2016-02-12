@@ -87,7 +87,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
     {
         $auth = m::mock('OneLogin_Saml2_Auth');
         $saml2 = new Saml2Auth($auth);
-        $auth->shouldReceive('processSLO')->once()->with(true);
+        $auth->shouldReceive('processSLO')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn('errors');
 
         $error =  $saml2->sls();
@@ -99,7 +99,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
     {
         $auth = m::mock('OneLogin_Saml2_Auth');
         $saml2 = new Saml2Auth($auth);
-        $auth->shouldReceive('processSLO')->once()->with(true);
+        $auth->shouldReceive('processSLO')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(null);
 
         $error =  $saml2->sls();

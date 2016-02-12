@@ -2,9 +2,7 @@
 
 namespace Aacotroneo\Saml2;
 
-use Input;
 use OneLogin_Saml2_Auth;
-use URL;
 
 /**
  * A simple class that represents the user that 'came' inside the saml2 assertion
@@ -47,14 +45,14 @@ class Saml2User
      */
     function getRawSamlAssertion()
     {
-        return Input::get('SAMLResponse'); //just this request
+        return app('request')->input('SAMLResponse'); //just this request
     }
 
     function getIntendedUrl()
     {
-        $relayState = Input::get('RelayState'); //just this request
+        $relayState = app('request')->input('RelayState'); //just this request
 
-        if ($relayState && URL::full() !=$relayState) {
+        if ($relayState && url()->full() != $relayState) {
 
             return $relayState;
         }

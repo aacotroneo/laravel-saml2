@@ -1,7 +1,10 @@
 <?php
 
 
-Route::group(array('prefix' => config('saml2_settings.routesPrefix')), function () {
+Route::group([
+    'prefix' => config('saml2_settings.routesPrefix'),
+    'middleware' => config('saml2_settings.routesMiddleware'),
+], function () {
 
     Route::get('/logout', array(
         'as' => 'saml_logout',

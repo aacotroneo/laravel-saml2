@@ -3,15 +3,8 @@
 namespace Aacotroneo\Saml2\Http\Controllers;
 
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
-use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
-use Config;
-use Event;
-use Log;
-use Redirect;
-use Response;
-use Session;
 
 
 class Saml2Controller extends Controller
@@ -36,11 +29,8 @@ class Saml2Controller extends Controller
     {
 
         $metadata = $this->saml2Auth->getMetadata();
-        $response = Response::make($metadata, 200);
 
-        $response->header('Content-Type', 'text/xml');
-
-        return $response;
+        return response($metadata, 200, ['Content-Type' => 'text/xml']);
     }
 
     /**
@@ -52,21 +42,21 @@ class Saml2Controller extends Controller
         $errors = $this->saml2Auth->acs();
 
         if (!empty($errors)) {
-            Log::error('Saml2 error', $errors);
-            Session::flash('saml2_error', $errors);
-            return Redirect::to(config('saml2_settings.errorRoute'));
+            logger()->error('Saml2 error', $errors);
+            session()->flash('saml2_error', $errors);
+            return redirect(config('saml2_settings.errorRoute'));
         }
         $user = $this->saml2Auth->getSaml2User();
 
-        Event::fire(new Saml2LoginEvent($user));
+        event(new Saml2LoginEvent($user));
 
         $redirectUrl = $user->getIntendedUrl();
 
         if ($redirectUrl !== null) {
-            return Redirect::to($redirectUrl);
+            return redirect($redirectUrl);
         } else {
 
-            return Redirect::to(config('saml2_settings.loginRoute')); 
+            return redirect(config('saml2_settings.loginRoute'));
         }
     }
 
@@ -82,8 +72,7 @@ class Saml2Controller extends Controller
             throw new \Exception("Could not log out");
         }
 
-        Event::fire(new Saml2LogoutEvent());
-        return Redirect::to(Config::get('saml2::settings.logoutRoute')); //may be set a configurable default
+        return redirect(config('saml2_settings.logoutRoute')); //may be set a configurable default
     }
 
     /**

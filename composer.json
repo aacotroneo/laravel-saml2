@@ -4,6 +4,7 @@
     "keywords": ["laravel","saml", "saml2", "onelogin"],
     "homepage": "https://github.com/aacotroneo/laravel-saml2",
     "license": "MIT",
+    "version": "0.7.1",
     "authors": [
         {
             "name": "aacotroneo",
@@ -12,8 +13,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-	"illuminate/support": "5.1.*",
-        "onelogin/php-saml": "2.6"
+        "illuminate/support": ">=5.0.0",
+        "onelogin/php-saml": "2.6.1"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*"

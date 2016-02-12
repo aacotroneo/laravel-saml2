@@ -8,6 +8,7 @@ use OneLogin_Saml2_Utils;
 use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 
 use Log;
+use Session;
 use Psr\Log\InvalidArgumentException;
 
 class Saml2Auth
@@ -59,11 +60,11 @@ class Saml2Auth
      * Initiate a saml2 logout flow. It will close session on all other SSO services. You should close
      * local session if applicable.
      */
-    function logout()
+    function logout($returnTo = null)
     {
         $auth = $this->auth;
-
-        $auth->logout();
+        $federationData = Session::get('federationData');
+        $auth->logout($returnTo, array(), $federationData['nameId'], $federationData['sessionIndex']);
     }
 
     /**
@@ -83,6 +84,11 @@ class Saml2Auth
         if (!empty($errors)) {
             return $errors;
         }
+
+        Session::put('federationData', [
+            'sessionIndex' => $auth->getSessionIndex(),
+            'nameId' => $auth->getNameId()
+        ]);
 
         if (!$auth->isAuthenticated()) {
             return array('error' => 'Could not authenticate');
@@ -106,7 +112,8 @@ class Saml2Auth
             event(new Saml2LogoutEvent());
         };
 
-        $auth->processSLO($keep_local_session, null, false, $session_callback);
+        // Mickael: Changed $retrieveParametersFromServer paramter to true otherwise when the signedQuery is corrupted and the signature validation failed
+        $auth->processSLO($keep_local_session, null, true, $session_callback);
 
         $errors = $auth->getErrors();
 
@@ -138,4 +145,4 @@ class Saml2Auth
     }
 
 
-} 
+}

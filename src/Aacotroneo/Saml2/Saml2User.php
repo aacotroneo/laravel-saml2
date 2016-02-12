@@ -58,4 +58,14 @@ class Saml2User
         }
     }
 
-} 
+    function getSessionIndex()
+    {
+        return $this->auth->getSessionIndex();
+    }
+
+    function getNameId()
+    {
+        return $this->auth->getNameId();
+    }
+
+}

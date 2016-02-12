@@ -5,6 +5,7 @@ namespace Aacotroneo\Saml2\Http\Controllers;
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
+use Illuminate\Http\Request;
 
 
 class Saml2Controller extends Controller
@@ -78,9 +79,12 @@ class Saml2Controller extends Controller
     /**
      * This initiates a logout request across all the SSO infrastructure.
      */
-    public function logout()
+    public function logout(Request $request)
     {
-        $this->saml2Auth->logout(); //will actually end up in the sls endpoint
+        $returnTo = $request->query('returnTo');
+        $sessionIndex = $request->query('sessionIndex');
+        $nameId = $request->query('nameId');
+        $this->saml2Auth->logout($returnTo, $nameId, $sessionIndex); //will actually end up in the sls endpoint
         //does not return
     }
 

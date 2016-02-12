@@ -37,10 +37,15 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testLogout()
     {
+        $expectedReturnTo = 'http://localhost';
+        $expectedSessionIndex = 'session_index_value';
+        $expectedNameId = 'name_id_value';
         $auth = m::mock('OneLogin_Saml2_Auth');
         $saml2 = new Saml2Auth($auth);
-        $auth->shouldReceive('logout')->with()->once();
-        $saml2->logout();
+        $auth->shouldReceive('logout')
+            ->with($expectedReturnTo, [], $expectedNameId, $expectedSessionIndex)
+            ->once();
+        $saml2->logout($expectedReturnTo, $expectedNameId, $expectedSessionIndex);
     }
 
 
@@ -134,4 +139,4 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 //        $this->assertEquals(2.71, $mock->e());
 
 }
- 
+

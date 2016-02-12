@@ -103,7 +103,7 @@ class Saml2Auth
         // destroy the local session by firing the Logout event
         $keep_local_session = false;
         $session_callback = function () {
-            \Event::fire(new Saml2LogoutEvent());
+            event(new Saml2LogoutEvent());
         };
 
         $auth->processSLO($keep_local_session, null, false, $session_callback);

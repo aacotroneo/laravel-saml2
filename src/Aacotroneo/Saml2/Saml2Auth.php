@@ -112,7 +112,8 @@ class Saml2Auth
             \Event::fire(new Saml2LogoutEvent());
         };
 
-        $auth->processSLO($keep_local_session, null, false, $session_callback);
+        // Mickael: Changed $retrieveParametersFromServer paramter to true otherwise when the signedQuery is corrupted and the signature validation failed
+        $auth->processSLO($keep_local_session, null, true, $session_callback);
 
         $errors = $auth->getErrors();
 

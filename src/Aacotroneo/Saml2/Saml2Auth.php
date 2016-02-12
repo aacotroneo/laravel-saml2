@@ -59,11 +59,11 @@ class Saml2Auth
      * Initiate a saml2 logout flow. It will close session on all other SSO services. You should close
      * local session if applicable.
      */
-    function logout()
+    function logout($returnTo = null)
     {
         $auth = $this->auth;
-
-        $auth->logout();
+        $federationData = Session::get('federationData');
+        $auth->logout($returnTo, array(), $federationData['nameId'], $federationData['sessionIndex']);
     }
 
     /**
@@ -83,6 +83,11 @@ class Saml2Auth
         if (!empty($errors)) {
             return $errors;
         }
+
+        Session::put('federationData', [
+            'sessionIndex' => $auth->getSessionIndex(),
+            'nameId' => $auth->getNameId()
+        ]);
 
         if (!$auth->isAuthenticated()) {
             return array('error' => 'Could not authenticate');
@@ -138,4 +143,4 @@ class Saml2Auth
     }
 
 
-} 
+}

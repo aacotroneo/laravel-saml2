@@ -52,7 +52,9 @@ class Saml2User
     {
         $relayState = app('request')->input('RelayState'); //just this request
 
-        if ($relayState && url()->full() != $relayState) {
+        $url = app('Illuminate\Contracts\Routing\UrlGenerator');
+
+        if ($relayState && $url->full() != $relayState) {
 
             return $relayState;
         }

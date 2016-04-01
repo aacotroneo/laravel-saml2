@@ -33,7 +33,7 @@ Then publish the config file with `php artisan vendor:publish`. This will add th
 
 ### Configuration
 
-Once you publish your saml2_settings.php to your own files, you need to configure your sp and IDP (remote server). The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are inyected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
+Once you publish your saml2_settings.php to your own files, you need to configure your sp and IDP (remote server). The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are injected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
 
 Remember that you don't need to implement those routes, but you'll need to add them to your IDP configuration. For example, if you use simplesamlphp, add the following to /metadata/sp-remote.php
 
@@ -51,7 +51,7 @@ You can check that metadata if you actually navigate to 'http://laravel_url/saml
 
 ### Usage
 
-When you want your user to login, just call `Saml2Auth::login()` or redirect to route 'saml2_login'. Just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP wheather the user is logged in or not. For example, you can change your authentication middleware.
+When you want your user to login, just call `Saml2Auth::login()` or redirect to route 'saml2_login'. Just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP whether the user is logged in or not. For example, you can change your authentication middleware.
 ```php
 	public function handle($request, Closure $next)
 	{
@@ -63,7 +63,7 @@ When you want your user to login, just call `Saml2Auth::login()` or redirect to 
 			}
 			else
 			{
-        			 return SAML2::login(URL::full());
+        			 return Saml2::login(URL::full());
                 		 //return redirect()->guest('auth/login');
 			}
 		}
@@ -72,7 +72,7 @@ When you want your user to login, just call `Saml2Auth::login()` or redirect to 
 	};
 ```
 
-Only if you want to know, that will redirect the user to the IDP, and will came back to an endpoint the library serves at /saml2/acs. That will process the response and fire an event when is ready. So, next step for you is to handle that event. You just need to login the user or refuse.
+The Saml2::login will redirect the user to the IDP and will came back to an endpoint the library serves at /saml2/acs. That will process the response and fire an event when ready. The next step for you is to handle that event. You just need to login the user or refuse.
 
 ```php
 
@@ -95,7 +95,7 @@ Now there are two ways the user can log out.
  + 1 - By logging out in your app: In this case you 'should' notify the IDP first so it closes global session.
  + 2 - By logging out of the global SSO Session. In this case the IDP will notify you on /saml2/slo endpoint (already provided)
 
-For case 1 call `Saml2Auth::logout();` or redirect the user to the route 'saml_logout' which does just that. Do not close session inmediately as you need to receive a response confirmation from the IDP (redirection). That response will be handled by the library at /saml2/sls and will fire an event for you to complete the operation.
+For case 1 call `Saml2Auth::logout();` or redirect the user to the route 'saml_logout' which does just that. Do not close the session inmediately as you need to receive a response confirmation from the IDP (redirection). That response will be handled by the library at /saml2/sls and will fire an event for you to complete the operation.
 
 For case 2 you will only receive the event. Both cases 1 and 2 receive the same event. 
 
@@ -110,8 +110,3 @@ Note that for case 2, you may have to manually save your session to make the log
 
 
 That's it. Feel free to ask any questions, make PR or suggestions, or open Issues.
-
-
-
-
-

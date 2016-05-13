@@ -7,7 +7,6 @@ use OneLogin_Saml2_Error;
 use OneLogin_Saml2_Utils;
 use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 
-use Log;
 use Psr\Log\InvalidArgumentException;
 
 class Saml2Auth
@@ -25,6 +24,9 @@ class Saml2Auth
         $this->auth = $auth;
     }
 
+    function getSessionIndex() {
+        return $this->_sessionIndex;
+    }
     /**
      * @return bool if a valid user was fetched from the saml assertion this request.
      */
@@ -59,11 +61,10 @@ class Saml2Auth
      * Initiate a saml2 logout flow. It will close session on all other SSO services. You should close
      * local session if applicable.
      */
-    function logout($returnTo = null, $nameId = null, $sessionIndex = null)
+    function logout()
     {
         $auth = $this->auth;
-
-        $auth->logout($returnTo, [], $nameId, $sessionIndex);
+        $auth->logout();
     }
 
     /**
@@ -77,7 +78,6 @@ class Saml2Auth
         $auth = $this->auth;
 
         $auth->processResponse();
-
         $errors = $auth->getErrors();
 
         if (!empty($errors)) {
@@ -96,7 +96,7 @@ class Saml2Auth
      * Process a Saml response (assertion consumer service)
      * returns an array with errors if it can not logout
      */
-    function sls($retrieveParametersFromServer = false)
+    function sls()
     {
         $auth = $this->auth;
 
@@ -106,7 +106,7 @@ class Saml2Auth
             event(new Saml2LogoutEvent());
         };
 
-        $auth->processSLO($keep_local_session, null, $retrieveParametersFromServer, $session_callback);
+        $auth->processSLO($keep_local_session, null, false, $session_callback);
 
         $errors = $auth->getErrors();
 
@@ -138,4 +138,4 @@ class Saml2Auth
     }
 
 
-}
+} 

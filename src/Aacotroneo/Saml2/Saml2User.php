@@ -40,6 +40,10 @@ class Saml2User
         return $auth->getAttributes();
     }
 
+    function getAuth() {
+        return $this->auth;
+    }
+
     /**
      * @return string the saml assertion processed this request
      */
@@ -48,26 +52,19 @@ class Saml2User
         return app('request')->input('SAMLResponse'); //just this request
     }
 
+    function getSessionIndex() {
+
+        return $this->auth->getSessionIndex();
+    }
+
     function getIntendedUrl()
     {
         $relayState = app('request')->input('RelayState'); //just this request
-
-        $url = app('Illuminate\Contracts\Routing\UrlGenerator');
-
-        if ($relayState && $url->full() != $relayState) {
+        $relayState = preg_replace("/http\:\/\/(.*?)\/login/", "http://$1/", $relayState);
+        if ($relayState && url()->full() != $relayState) {
 
             return $relayState;
         }
     }
 
-    function getSessionIndex()
-    {
-        return $this->auth->getSessionIndex();
-    }
-
-    function getNameId()
-    {
-        return $this->auth->getNameId();
-    }
-
-}
+} 

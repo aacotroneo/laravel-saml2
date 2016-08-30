@@ -70,7 +70,6 @@ When you want your user to login, just call `Saml2Auth::login()` or redirect to 
                 		 //return redirect()->guest('auth/login');
 			}
 		}
-
 		return $next($request);
 	};
 ```
@@ -113,8 +112,3 @@ Note that for case 2, you may have to manually save your session to make the log
 
 
 That's it. Feel free to ask any questions, make PR or suggestions, or open Issues.
-
-
-
-
-

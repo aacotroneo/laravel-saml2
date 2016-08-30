@@ -6,6 +6,7 @@ use OneLogin_Saml2_Auth;
 use OneLogin_Saml2_Error;
 use OneLogin_Saml2_Utils;
 use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
+use DebugBar;
 
 use Psr\Log\InvalidArgumentException;
 
@@ -64,6 +65,7 @@ class Saml2Auth
     function logout()
     {
         $auth = $this->auth;
+        
         $auth->logout();
     }
 
@@ -74,12 +76,9 @@ class Saml2Auth
     function acs()
     {
 
-        /** @var $auth OneLogin_Saml2_Auth */
         $auth = $this->auth;
-
         $auth->processResponse();
         $errors = $auth->getErrors();
-
         if (!empty($errors)) {
             return $errors;
         }
@@ -104,6 +103,7 @@ class Saml2Auth
         $keep_local_session = false;
         $session_callback = function () {
             event(new Saml2LogoutEvent());
+            // Event::fire(new Saml2LogoutEvent());
         };
 
         $auth->processSLO($keep_local_session, null, false, $session_callback);

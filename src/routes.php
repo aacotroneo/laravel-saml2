@@ -1,9 +1,9 @@
 <?php
 
-
 Route::group([
     'prefix' => config('saml2_settings.routesPrefix'),
     'middleware' => config('saml2_settings.routesMiddleware'),
+    'middleware' => 'session',
 ], function () {
 
     Route::get('/logout', array(
@@ -26,7 +26,7 @@ Route::group([
         'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@acs',
     ));
 
-    Route::get('/sls', array(
+    Route::post('/sls', array(
         'as' => 'saml_sls',
         'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@sls',
     ));

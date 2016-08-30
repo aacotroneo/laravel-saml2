@@ -1,20 +1,20 @@
 {
-    "name": "tegarajipangestu/laravel-saml2",
-    "description": "A Laravel package for Saml2 integration as a SP (service provider) based on OneLogin toolkit, which is much lightweight than simplesamlphp. Forked from aacotroneo/laravel-saml2",
+    "name": "aacotroneo/laravel-saml2",
+    "description": "A Laravel package for Saml2 integration as a SP (service provider) based on OneLogin toolkit, which is much lightweight than simplesamlphp",
     "keywords": ["laravel","saml", "saml2", "onelogin"],
-    "homepage": "https://github.com/tegarajipangestu/laravel-saml2",
+    "homepage": "https://github.com/aacotroneo/laravel-saml2",
     "license": "MIT",
     "version": "0.7.1",
     "authors": [
         {
-            "name": "tegarajipangestu",
-            "email": "tegarajipangestu@gmail.com"
+            "name": "aacotroneo",
+            "email": "aacotroneo@gmail.com"
         }
     ],
     "require": {
         "php": ">=5.4.0",
         "illuminate/support": ">=5.0.0",
-        "onelogin/php-saml": "2.7.0"
+        "onelogin/php-saml": "2.6.1"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*"

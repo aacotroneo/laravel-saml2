@@ -5,8 +5,6 @@ namespace Aacotroneo\Saml2\Http\Controllers;
 use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
-use Debugbar;
-use Auth;
 
 
 class Saml2Controller extends Controller

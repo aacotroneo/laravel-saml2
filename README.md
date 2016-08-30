@@ -33,7 +33,7 @@ Then publish the config file with `php artisan vendor:publish`. This will add th
 
 ### Configuration
 
-Once you publish your saml2_settings.php to your own files, you need to configure your sp and IDP (remote server). The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are inyected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
+Once you publish your saml2_settings.php to your own files, you need to configure your sp and IDP (remote server). The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are injected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively
 
 Remember that you don't need to implement those routes, but you'll need to add them to your IDP configuration. For example, if you use simplesamlphp, add the following to /metadata/sp-remote.php
 
@@ -51,7 +51,7 @@ You can check that metadata if you actually navigate to 'http://laravel_url/saml
 
 ### Usage
 
-When you want your user to login, just call `Saml2Auth::login()` or redirect to route 'saml2_login'. Just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP wheather the user is logged in or not. For example, you can change your authentication middleware.
+When you want your user to login, just call `Saml2Auth::login()` or redirect to route 'saml2_login'. Just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP whether the user is logged in or not. For example, you can change your authentication middleware
 ```php
 	public function handle($request, Closure $next)
 	{

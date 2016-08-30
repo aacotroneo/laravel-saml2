@@ -55,6 +55,7 @@ Then set your ```idp_host``` as your laravel_url, and ```x509cert``` as your x50
 ### Usage
 
 When you want your user to login, just call `Saml2Auth::login()` or redirect to route 'saml2_login'. Just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP whether the user is logged in or not. For example, you can change your authentication middleware
+
 ```php
 	public function handle($request, Closure $next)
 	{

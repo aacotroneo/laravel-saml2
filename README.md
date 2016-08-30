@@ -1,6 +1,5 @@
 ## Laravel 5 - Saml2
 
-[![Build Status](https://travis-ci.org/aacotroneo/laravel-saml2.svg)](https://travis-ci.org/aacotroneo/laravel-saml2)
 
 A Laravel package for Saml2 integration as a SP (service provider) based on  [OneLogin](https://github.com/onelogin/php-saml) toolkit, which is much lighter and easier to install than simplesamlphp SP. It doesn't need separate routes or session storage to work!
 
@@ -14,7 +13,7 @@ To install Saml2 as a Composer package to be used with Laravel 4, simply add thi
 ```json
 "repositories": [{
     "type": "vcs",
-    "url": "http://github.com/Nodge/lessphp"
+    "url": "https://github.com/tegarajipangestu/laravel-saml2"
 }],
 ```
 

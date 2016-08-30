@@ -12,7 +12,10 @@ The aim of this library is to be as simple as possible. We won't mess with Larav
 To install Saml2 as a Composer package to be used with Laravel 4, simply add this to your composer.json:
 
 ```json
-"aacotroneo/laravel-saml2": "*"
+"repositories": [{
+    "type": "vcs",
+    "url": "http://github.com/Nodge/lessphp"
+}],
 ```
 
 ..and run `composer update`.  Once it's installed, you can register the service provider in `app/config/app.php` in the `providers` array. If you want, you can add the alias saml2:
@@ -46,8 +49,9 @@ $metadata['http://laravel_url/saml/metadata'] = array(
     'simplesaml.nameidattribute' => 'uid' 
 );
 ```
-You can check that metadata if you actually navigate to 'http://laravel_url/saml/metadata'
+You can check that metadata if you actually navigate to 'http://laravel_url/saml2/metadata'
 
+Then set your ```idp_host``` as your laravel_url, and ```x509cert``` as your x509 certificate of the Identity Provider.
 
 ### Usage
 

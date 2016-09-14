@@ -44,7 +44,7 @@ return $settings = array(
 
 
     /*****
-     * One Loign Settings
+     * One Login Settings
      */
 
 

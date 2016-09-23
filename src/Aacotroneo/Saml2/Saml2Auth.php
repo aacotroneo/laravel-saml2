@@ -65,8 +65,9 @@ class Saml2Auth
     function logout()
     {
         $auth = $this->auth;
-        
-        $auth->logout();
+        $sessionIndex =  session('session_index');
+
+        $auth->logout(null, [], null, $sessionIndex);
     }
 
     /**
@@ -75,7 +76,6 @@ class Saml2Auth
      */
     function acs()
     {
-
         $auth = $this->auth;
         $auth->processResponse();
         $errors = $auth->getErrors();

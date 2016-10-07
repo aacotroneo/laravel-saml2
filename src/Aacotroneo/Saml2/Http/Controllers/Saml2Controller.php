@@ -6,21 +6,35 @@ use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-
+use OneLogin_Saml2_Auth;
+use URL;
 
 class Saml2Controller extends Controller
 {
 
     protected $saml2Auth;
 
+    protected $config;
+
     /**
      * @param Saml2Auth $saml2Auth injected.
      */
-    function __construct(Saml2Auth $saml2Auth)
-    {
-        $this->saml2Auth = $saml2Auth;
-    }
+    function __construct(Request $request){
 
+        $uri = explode('/',$request->path());
+
+        $this->config = config('saml2.'.$uri[0].'_idp_settings');
+
+        $this->config['sp']['entityId'] = URL::route($uri[0].'_metadata');
+
+        $this->config['sp']['assertionConsumerService']['url'] = URL::route($uri[0].'_acs');
+
+        $this->config['sp']['singleLogoutService']['url'] = URL::route($uri[0].'_sls');
+
+        $auth = new OneLogin_Saml2_Auth($this->config);
+
+        $this->saml2Auth = new Saml2Auth($auth);
+    }
 
     /**
      * Generate local sp metadata
@@ -49,7 +63,9 @@ class Saml2Controller extends Controller
         }
         $user = $this->saml2Auth->getSaml2User();
 
-        event(new Saml2LoginEvent($user));
+        $loginEvent = $this->config['loginEvent'];
+
+        event(new $loginEvent($user));
 
         $redirectUrl = $user->getIntendedUrl();
 
@@ -68,7 +84,7 @@ class Saml2Controller extends Controller
      */
     public function sls()
     {
-        $error = $this->saml2Auth->sls(config('saml2_settings.retrieveParametersFromServer'));
+        $error = $this->saml2Auth->sls(config('saml2_settings.retrieveParametersFromServer'),$this->config['logoutEvent']);
         if (!empty($error)) {
             throw new \Exception("Could not log out");
         }

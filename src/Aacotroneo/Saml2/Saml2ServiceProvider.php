@@ -28,6 +28,7 @@ class Saml2ServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../../config/saml2_settings.php' => config_path('saml2_settings.php'),
+            __DIR__.'/../../config/test_idp_settings.php' => config_path('saml.test_idp_settings.php'),
         ]);
     }
 
@@ -38,21 +39,7 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
-        $this->app->singleton('Aacotroneo\Saml2\Saml2Auth', function ($app) {
-            $config = config('saml2_settings');
-
-            $config['sp']['entityId'] = URL::route('saml_metadata');
-
-            $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs');
-
-            $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
-
-            $auth = new OneLogin_Saml2_Auth($config);
-
-            return new \Aacotroneo\Saml2\Saml2Auth($auth);
-        });
-
+        //Moved to Saml2Controller
     }
 
     /**

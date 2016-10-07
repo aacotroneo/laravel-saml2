@@ -31,11 +31,23 @@ To install Saml2 as a Composer package to be used with Laravel 5, simply add thi
 ]
 ```
 
-Then publish the config file with `php artisan vendor:publish`. This will add the file `app/config/saml2_settings.php`. This config is handled almost directly by  [OneLogin](https://github.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary. There are some other config about routes you may want to check, they are pretty strightforward.
+Then publish the config files with `php artisan vendor:publish`. This will add the files `app/config/saml2_settings.php` & `app/config/saml2/test_idp_settings.php`. 
+
+The test_idp_settings.php config is handled almost directly by  [OneLogin](https://github.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary. There are some other config about routes you may want to check, they are pretty strightforward.
 
 ### Configuration
 
-Once you publish your saml2_settings.php to your own files, you need to configure your sp and IDP (remote server). The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are injected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
+Define names of all the IDPs you want to configure in saml2_settings.php
+
+```php
+    'idpNames' => ['test1', 'test2', 'test3'],
+```
+
+You will need to create a separate configuration file for each IDP under `app/config/saml2` folder. File should be named as `<idpName>_idp_settings.php`. You can use test_idp_settings as the starting point.
+
+You can register distinct login & logout event handlers for each IDP using `loginEvent` & `logoutEvent` settings. 
+
+Apart from that, the only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are injected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
 
 Remember that you don't need to implement those routes, but you'll need to add them to your IDP configuration. For example, if you use simplesamlphp, add the following to /metadata/sp-remote.php
 

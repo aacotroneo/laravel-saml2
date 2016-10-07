@@ -14,24 +14,24 @@ class Saml2Controller extends Controller
 
     protected $saml2Auth;
 
-    protected $config;
+    protected $idp;
 
     /**
      * @param Saml2Auth $saml2Auth injected.
      */
     function __construct(Request $request){
 
-        $uri = explode('/',$request->path());
+        $this->idp = explode('/',$request->path())[0];
 
-        $this->config = config('saml2.'.$uri[0].'_idp_settings');
+        $config = config('saml2.'.$this->idp.'_idp_settings');
 
-        $this->config['sp']['entityId'] = URL::route($uri[0].'_metadata');
+        $config['sp']['entityId'] = URL::route($this->idp.'_metadata');
 
-        $this->config['sp']['assertionConsumerService']['url'] = URL::route($uri[0].'_acs');
+        $config['sp']['assertionConsumerService']['url'] = URL::route($this->idp.'_acs');
 
-        $this->config['sp']['singleLogoutService']['url'] = URL::route($uri[0].'_sls');
+        $config['sp']['singleLogoutService']['url'] = URL::route($this->idp.'_sls');
 
-        $auth = new OneLogin_Saml2_Auth($this->config);
+        $auth = new OneLogin_Saml2_Auth($config);
 
         $this->saml2Auth = new Saml2Auth($auth);
     }
@@ -65,7 +65,7 @@ class Saml2Controller extends Controller
 
         $loginEvent = $this->config['loginEvent'];
 
-        event(new $loginEvent($user));
+        event(new Saml2LoginEvent($idp, $user));
 
         $redirectUrl = $user->getIntendedUrl();
 
@@ -84,7 +84,7 @@ class Saml2Controller extends Controller
      */
     public function sls()
     {
-        $error = $this->saml2Auth->sls(config('saml2_settings.retrieveParametersFromServer'),$this->config['logoutEvent']);
+        $error = $this->saml2Auth->sls($this->idp, config('saml2_settings.retrieveParametersFromServer'));
         if (!empty($error)) {
             throw new \Exception("Could not log out");
         }

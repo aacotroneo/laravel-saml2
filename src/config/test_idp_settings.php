@@ -5,16 +5,6 @@ $idp_host = 'http://localhost:8000/simplesaml';
 
 return $settings = array(
 
-    /**
-     * Login event listener
-     */
-    'loginEvent' => '\Aacotroneo\Saml2\Events\Saml2LoginEvent',
-
-    /**
-     * Logout event listener
-     */
-    'logoutEvent' => '\Aacotroneo\Saml2\Events\Saml2LogoutEvent',
-
     /*****
      * One Login Settings
      */

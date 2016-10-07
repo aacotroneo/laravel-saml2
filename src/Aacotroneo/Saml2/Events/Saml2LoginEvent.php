@@ -2,12 +2,13 @@
 
 namespace Aacotroneo\Saml2\Events;
 
-class Saml2LoginEvent {
+class Saml2LoginEvent extends Saml2Event {
 
     protected $user;
 
-    function __construct($user)
+    function __construct($idp, $user)
     {
+        parent::__construct($idp);
         $this->user = $user;
     }
 
@@ -15,7 +16,5 @@ class Saml2LoginEvent {
     {
         return $this->user;
     }
-
-
 
 }

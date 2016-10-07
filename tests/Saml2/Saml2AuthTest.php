@@ -95,7 +95,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
         $auth->shouldReceive('processSLO')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn('errors');
 
-        $error =  $saml2->sls();
+        $error =  $saml2->sls('test');
 
         $this->assertNotEmpty($error);
     }
@@ -107,7 +107,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
         $auth->shouldReceive('processSLO')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(null);
 
-        $error =  $saml2->sls();
+        $error =  $saml2->sls('test');
 
         $this->assertEmpty($error);
     }

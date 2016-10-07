@@ -1,6 +1,8 @@
+Forked from aacotroneo/laravel-saml2. Idea is to enhance the existing code to support configuration for multiple IDPs.
+
 ## Laravel 5 - Saml2
 
-[![Build Status](https://travis-ci.org/aacotroneo/laravel-saml2.svg)](https://travis-ci.org/aacotroneo/laravel-saml2)
+[![Build Status](https://travis-ci.org/nirajp/laravel-saml2.svg)](https://travis-ci.org/nirajp/laravel-saml2)
 
 A Laravel package for Saml2 integration as a SP (service provider) based on  [OneLogin](https://github.com/onelogin/php-saml) toolkit, which is much lighter and easier to install than simplesamlphp SP. It doesn't need separate routes or session storage to work!
 
@@ -9,10 +11,10 @@ The aim of this library is to be as simple as possible. We won't mess with Larav
 
 ## Installation - Composer
 
-To install Saml2 as a Composer package to be used with Laravel 4, simply add this to your composer.json:
+To install Saml2 as a Composer package to be used with Laravel 5, simply add this to your composer.json:
 
 ```json
-"aacotroneo/laravel-saml2": "*"
+"nirajp/laravel-saml2": "*"
 ```
 
 ..and run `composer update`.  Once it's installed, you can register the service provider in `app/config/app.php` in the `providers` array. If you want, you can add the alias saml2:

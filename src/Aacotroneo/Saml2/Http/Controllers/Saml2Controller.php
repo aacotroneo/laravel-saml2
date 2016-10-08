@@ -22,6 +22,9 @@ class Saml2Controller extends Controller
     function __construct(Request $request){
 
         $this->idp = explode('/',$request->path())[0];
+        if (!$this->idp) {
+            $this->idp = 'test';
+        }
 
         $config = config('saml2.'.$this->idp.'_idp_settings');
 

@@ -37,17 +37,15 @@ The test_idp_settings.php config is handled almost directly by  [OneLogin](https
 
 ### Configuration
 
-Define names of all the IDPs you want to configure in saml2_settings.php
+Define names of all the IDPs you want to configure in saml2_settings.php. Keep 'test' as the first IDP, and add real IDPs after that.
 
 ```php
-    'idpNames' => ['test1', 'test2', 'test3'],
+    'idpNames' => ['test', 'myidp1', 'myidp2'],
 ```
 
-You will need to create a separate configuration file for each IDP under `app/config/saml2` folder. File should be named as `<idpName>_idp_settings.php`. You can use test_idp_settings as the starting point.
+You will need to create a separate configuration file for each IDP under `app/config/saml2` folder. e.g. `myidp1_idp_settings.php`. You can use `test_idp_settings.php` as the starting point.
 
-You can register distinct login & logout event handlers for each IDP using `loginEvent` & `logoutEvent` settings. 
-
-Apart from that, the only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are injected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
+The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are injected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
 
 Remember that you don't need to implement those routes, but you'll need to add them to your IDP configuration. For example, if you use simplesamlphp, add the following to /metadata/sp-remote.php
 

@@ -81,11 +81,11 @@ class Saml2Auth
         $errors = $auth->getErrors();
 
         if (!empty($errors)) {
-            return $errors;
+            return array('error' => $errors, 'last_error_reason' => $auth->getLastErrorReason());
         }
 
         if (!$auth->isAuthenticated()) {
-            return array('error' => 'Could not authenticate');
+            return array('error' => 'Could not authenticate', 'last_error_reason' => $auth->getLastErrorReason());
         }
 
         return null;
@@ -110,7 +110,7 @@ class Saml2Auth
 
         $errors = $auth->getErrors();
 
-        return $errors;
+        return array('error' => $errors, 'last_error_reason' => $auth->getLastErrorReason());
     }
 
     /**

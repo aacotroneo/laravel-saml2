@@ -110,8 +110,13 @@ class Saml2Auth
 
         $errors = $auth->getErrors();
 
-        return array('error' => $errors, 'last_error_reason' => $auth->getLastErrorReason());
-    }
+        if (!empty($errors)) {
+            return array('error' => $errors, 'last_error_reason' => $auth->getLastErrorReason());
+         }
+
+        return null;
+
+   }
 
     /**
      * Show metadata about the local sp. Use this to configure your saml2 IDP

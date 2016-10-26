@@ -41,12 +41,15 @@ class Saml2ServiceProvider extends ServiceProvider
 
         $this->app->singleton('Aacotroneo\Saml2\Saml2Auth', function ($app) {
             $config = config('saml2_settings');
-
-            $config['sp']['entityId'] = URL::route('saml_metadata');
-
-            $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs');
-
-            $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
+            if (empty($config['sp']['entityId'])) {
+                $config['sp']['entityId'] = URL::route('saml_metadata');
+            }
+            if (empty($config['sp']['assertionConsumerService']['url'])) {
+                $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs');
+            }
+            if (empty($config['sp']['singleLogoutService']['url'])) {
+                $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
+            }
 
             $auth = new OneLogin_Saml2_Auth($config);
 

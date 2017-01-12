@@ -36,7 +36,7 @@ class Saml2Controller extends Controller
 
     /**
      * Process an incoming saml2 assertion request.
-     * Fires 'saml2.loginRequestReceived' event if a valid user is Found
+     * Fires 'Saml2LoginEvent' event if a valid user is Found
      */
     public function acs()
     {

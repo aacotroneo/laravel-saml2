@@ -47,7 +47,8 @@ class Saml2ServiceProvider extends ServiceProvider
             if (empty($config['sp']['assertionConsumerService']['url'])) {
                 $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs');
             }
-            if (empty($config['sp']['singleLogoutService']['url'])) {
+            if (!empty($config['sp']['singleLogoutService']) &&
+                 empty($config['sp']['singleLogoutService']['url'])) {
                 $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
             }
 

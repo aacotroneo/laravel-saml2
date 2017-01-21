@@ -93,6 +93,7 @@ return $settings = array(
         ),
         // Specifies info about where and how the <Logout Response> message MUST be
         // returned to the requester, in this case our SP.
+        // Remove this part to not include any URL Location in the metadata.
         'singleLogoutService' => array(
             // URL Location where the <Response> from the IdP will be returned,
             // using HTTP-Redirect binding.

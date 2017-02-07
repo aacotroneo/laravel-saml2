@@ -43,6 +43,9 @@ class Saml2Controller extends Controller
         $errors = $this->saml2Auth->acs();
 
         if (!empty($errors)) {
+            logger()->error('Saml2 error_detail', ['error' => $this->saml2Auth->getLastErrorReason()]);
+            session()->flash('saml2_error_detail', [$this->saml2Auth->getLastErrorReason()]);
+
             logger()->error('Saml2 error', $errors);
             session()->flash('saml2_error', $errors);
             return redirect(config('saml2_settings.errorRoute'));

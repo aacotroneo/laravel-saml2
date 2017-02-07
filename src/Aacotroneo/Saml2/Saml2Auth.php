@@ -137,5 +137,12 @@ class Saml2Auth
         }
     }
 
-
+    /**
+     * Get the last error reason from \OneLogin_Saml2_Auth, useful for error debugging.
+     * @see \OneLogin_Saml2_Auth::getLastErrorReason()
+     * @return string
+     */
+    function getLastErrorReason() {
+        return $this->auth->getLastErrorReason();
+    }
 }

@@ -64,7 +64,13 @@ return $settings = array(
     'strict' => true, //@todo: make this depend on laravel config
 
     // Enable debug mode (to print errors)
-    'debug' => false, //@todo: make this depend on laravel config
+    'debug' => false, //@todo: make this depend on laravel config,
+
+    // If 'proxyVars' is True, then the Saml lib will trust proxy headers
+    // e.g X-Forwarded-Proto / HTTP_X_FORWARDED_PROTO. This is useful if
+    // your application is running behind a load balancer which terminates
+    // SSL.
+    'proxyVars' => false,
 
     // Service Provider Data that we are deploying
     'sp' => array(

@@ -46,7 +46,7 @@ $metadata['http://laravel_url/saml/metadata'] = array(
     'simplesaml.nameidattribute' => 'uid' 
 );
 ```
-You can check that metadata if you actually navigate to 'http://laravel_url/saml/metadata'
+You can check that metadata if you actually navigate to 'http://laravel_url/saml2/metadata'
 
 
 ### Usage

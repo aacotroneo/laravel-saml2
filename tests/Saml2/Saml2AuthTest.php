@@ -40,12 +40,13 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
         $expectedReturnTo = 'http://localhost';
         $expectedSessionIndex = 'session_index_value';
         $expectedNameId = 'name_id_value';
+        $expectedNameIdFormat = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified';
         $auth = m::mock('OneLogin_Saml2_Auth');
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('logout')
-            ->with($expectedReturnTo, [], $expectedNameId, $expectedSessionIndex)
+            ->with($expectedReturnTo, [], $expectedNameId, $expectedSessionIndex, false, $expectedNameIdFormat)
             ->once();
-        $saml2->logout($expectedReturnTo, $expectedNameId, $expectedSessionIndex);
+        $saml2->logout($expectedReturnTo, $expectedNameId, $expectedSessionIndex, $expectedNameIdFormat);
     }
 
 

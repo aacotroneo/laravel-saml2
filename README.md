@@ -69,7 +69,7 @@ When you want your user to login, just call `Saml2Auth::login()` or redirect to 
 		}
 
 		return $next($request);
-	};
+	}
 ```
 
 The Saml2::login will redirect the user to the IDP and will came back to an endpoint the library serves at /saml2/acs. That will process the response and fire an event when ready. The next step for you is to handle that event. You just need to login the user or refuse.

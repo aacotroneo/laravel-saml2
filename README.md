@@ -38,12 +38,12 @@ Once you publish your saml2_settings.php to your own files, you need to configur
 Remember that you don't need to implement those routes, but you'll need to add them to your IDP configuration. For example, if you use simplesamlphp, add the following to /metadata/sp-remote.php
 
 ```php
-$metadata['http://laravel_url/saml/metadata'] = array(
-    'AssertionConsumerService' => 'http://laravel_url/saml/acs',
-    'SingleLogoutService' => 'http://laravel_url/saml/sls',
-    //the following two affect what the $Saml2user->getUserId() will return
-    'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-    'simplesaml.nameidattribute' => 'uid' 
+$metadata['http://laravel_url/saml2/metadata'] = array(
+'AssertionConsumerService' => 'http://laravel_url/saml2/acs',
+'SingleLogoutService' => 'http://laravel_url/saml2/sls',
+//the following two affect what the $Saml2user->getUserId() will return
+'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+'simplesaml.nameidattribute' => 'uid'
 );
 ```
 You can check that metadata if you actually navigate to 'http://laravel_url/saml2/metadata'

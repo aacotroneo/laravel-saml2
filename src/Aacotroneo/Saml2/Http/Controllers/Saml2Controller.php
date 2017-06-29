@@ -8,6 +8,8 @@ use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 use HL7;
 use App\Models\User;
+use App\Exceptions\HL7\InvalidMessageHL7Exception;
+use App\Exceptions\AccessExceptions\PermissionDeniedException;
 
 
 class Saml2Controller extends Controller
@@ -52,17 +54,9 @@ class Saml2Controller extends Controller
             session()->flash('saml2_error', $errors);
             return redirect(config('saml2_settings.errorRoute'));
         }
+
         $user = $this->saml2Auth->getSaml2User();
         event(new Saml2LoginEvent($user));
-
-        $message = $this->getHL7MessageFromRequest( $user );
-        $requestQueryParams = '';
-        if( !empty($message) )
-        {
-            $appUser = $this->getUserFromRequest( $user );
-            $request = $this->createRequest( $message, $appUser );
-            $requestQueryParams = $this->getUrlParamString( $request );
-        }
 
         $redirectUrl = $user->getIntendedUrl();
 
@@ -70,10 +64,7 @@ class Saml2Controller extends Controller
             $redirectUrl = config('saml2_settings.loginRoute');
         }
 
-        print_r( $redirectUrl . $requestQueryParams );
-        exit();
-
-        return redirect($redirectUrl . $requestQueryParams);
+        return $this->processRequestMessage( $user, $redirectUrl );
     }
 
     /**
@@ -207,5 +198,51 @@ class Saml2Controller extends Controller
         $requestObject->save();
 
         return $requestObject;
+    }
+
+    /**
+     * Checks if there is an HL7 message, process the message and returns the query parameter string
+     *
+     * @param   Saml2User   $user
+     * @return  String
+     */
+    private function processRequestMessage( $user, $redirectUrl )
+    {
+        try
+        {
+            $requestQueryParams = '';
+            $message = $this->getHL7MessageFromRequest( $user );
+            if( !empty($message) )
+            {
+                $appUser = $this->getUserFromRequest( $user );
+                $request = $this->createRequest( $message, $appUser );
+                return $this->getUrlParamString( $request );
+            }
+            print_r($redirectUrl . $requestQueryParams);
+            exit();
+            return redirect( $redirectUrl . $requestQueryParams );
+        }
+        catch(Exception $e)
+        {
+            logger()->error('Saml2 error_detail', ['error' => $e->getMessage()]);
+            session()->flash('saml2_error_detail', [$e->getMessage()]);
+            return redirect(config('saml2_settings.errorRoute'));
+        }
+        catch( InvalidMessageHL7Exception $e )
+        {
+            logger()->error('Saml2 error_detail', ['error' => $e->getMessage()]);
+            session()->flash('saml2_error_detail', [$e->getMessage()]);
+            print_r($redirectUrl . $requestQueryParams);
+            exit();
+            return redirect(config('saml2_settings.errorRoute'));
+        }
+        catch( PermissionDeniedException $e )
+        {
+            logger()->error('Saml2 error_detail', ['error' => $e->getMessage()]);
+            session()->flash('saml2_error_detail', [$e->getMessage()]);
+            print_r($redirectUrl . $requestQueryParams);
+            exit();
+            return redirect(config('saml2_settings.errorRoute'));
+        }
     }
 }

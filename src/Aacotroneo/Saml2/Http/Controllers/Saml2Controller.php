@@ -216,7 +216,7 @@ class Saml2Controller extends Controller
             {
                 $appUser = $this->getUserFromRequest( $user );
                 $request = $this->createRequest( $message, $appUser );
-                return $this->getUrlParamString( $request );
+                $requestQueryParams = $this->getUrlParamString( $request );
             }
             print_r($redirectUrl . $requestQueryParams);
             exit();

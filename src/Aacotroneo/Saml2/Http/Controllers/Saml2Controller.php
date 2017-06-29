@@ -6,6 +6,8 @@ use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use HL7;
+use App\Models\User;
 
 
 class Saml2Controller extends Controller
@@ -51,17 +53,27 @@ class Saml2Controller extends Controller
             return redirect(config('saml2_settings.errorRoute'));
         }
         $user = $this->saml2Auth->getSaml2User();
-
         event(new Saml2LoginEvent($user));
+
+        $message = $this->getHL7MessageFromRequest( $user );
+        $requestQueryParams = '';
+        if( !empty($message) )
+        {
+            $appUser = $this->getUserFromRequest( $user );
+            $request = $this->createRequest( $message, $appUser );
+            $requestQueryParams = $this->getUrlParamString( $request );
+        }
 
         $redirectUrl = $user->getIntendedUrl();
 
-        if ($redirectUrl !== null) {
-            return redirect($redirectUrl);
-        } else {
-
-            return redirect(config('saml2_settings.loginRoute'));
+        if ($redirectUrl === null) {
+            $redirectUrl = config('saml2_settings.loginRoute');
         }
+
+        print_r( $redirectUrl . $requestQueryParams );
+        exit();
+
+        return redirect($redirectUrl . $requestQueryParams);
     }
 
     /**
@@ -100,4 +112,100 @@ class Saml2Controller extends Controller
         $this->saml2Auth->login(config('saml2_settings.loginRoute'));
     }
 
+    /**
+     * Gets the HL7 message from the user request
+     *
+     * @param   Saml2User     $user
+     * @return  String       
+     */
+    private function getHL7MessageFromRequest( $user )
+    {
+        $attributes = $user->getAttributes();
+
+        if( !array_key_exists('RequestMessage', $attributes) || sizeof($attributes['RequestMessage']) === 0 )
+        {
+            return null;
+        }
+
+        return $attributes['RequestMessage'][0];
+    }
+
+    /**
+     * Get the user model using the email on request
+     *
+     * @param   Saml2User   $user
+     * @return  User
+     */
+    private function getUserFromRequest( $samlUser )
+    {
+        $email = $samlUser->getAttributes()['Email'][0];
+
+        // Find a node with the attribute Name set as Email, after find the text node that contains the email
+        $user = User::whereUsername( $email )->first();
+        if ( is_null($user) )
+        {
+            throw new Saml2UserNotPresentException( "Saml request with username {$username} does not have an user on AristaMD" );
+        }
+        return $user;
+    }
+
+    /**
+     * Get the query params for the request object
+     *
+     * @param   Request   $request
+     * @return  String
+     */
+    public function getUrlParamString( $request )
+    {
+        if( empty($request) || empty($request->id) )
+        {
+            return "";
+        }
+
+        $recordType = null;
+
+        switch ( get_class($request) )
+        {
+            case 'App\Models\EConsult':
+                $recordType = 'econsult';
+                break;
+            case 'App\Models\Referral':
+                $recordType = 'referral';
+                break;
+            default:
+                $recordType = null;
+                break;
+        }
+
+        return "&record_type=$recordType&record_id=$request->id";
+    }
+
+    /**
+     * Creates a referral or an eConsult from a HL7 message
+     *
+     * @param   String  $message    HL7 message as string
+     * @param   User    $user       Authenticated user
+     * @return  Integer             Request id
+     */
+    private function createRequest( $message, $user )
+    {
+        if ( empty($message) )
+        {
+            /*$this->responseCode( 500 );
+            $this->message = "Internal Error. Please provide the HL7 v.2.3 REF message.";
+            return $this->buildResponse( );*/
+        }
+        // Getting the patient data from the HL7 message
+        $patient = HL7::transformPatient( $user->organization->id, $message );
+        $requestObject = HL7::transformRequest( $user->id, $user->organization->id, $message );
+
+        $patient->save();
+
+        $requestObject->patient_id = $patient->id;
+        $requestObject->patient_version = $patient->version;
+
+        $requestObject->save();
+
+        return $requestObject;
+    }
 }

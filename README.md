@@ -77,7 +77,8 @@ The Saml2::login will redirect the user to the IDP and will came back to an endp
 ```php
 
  Event::listen('Aacotroneo\Saml2\Events\Saml2LoginEvent', function (Saml2LoginEvent $event) {
-
+            $messageId = $event->getSaml2Auth()->getLastMessageId();
+            // your own code preventing reuse of a $messageId to stop replay attacks
             $user = $event->getSaml2User();
             $userData = [
                 'id' => $user->getUserId(),

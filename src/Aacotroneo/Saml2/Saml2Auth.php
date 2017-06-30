@@ -45,6 +45,15 @@ class Saml2Auth
     }
 
     /**
+     * The ID of the last message processed
+     * @return String
+     */
+    function getLastMessageId()
+    {
+        return $this->auth->getLastMessageId();
+    }
+
+    /**
      * Initiate a saml2 login flow. It will redirect! Before calling this, check if user is
      * authenticated (here in saml2). That would be true when the assertion was received this request.
      */

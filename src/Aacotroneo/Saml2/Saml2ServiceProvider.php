@@ -29,6 +29,10 @@ class Saml2ServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/saml2_settings.php' => config_path('saml2_settings.php'),
         ]);
+
+        if (config('saml2_settings.proxyVars', false)) {
+            \OneLogin_Saml2_Utils::setProxyVars(true);
+        }
     }
 
     /**
@@ -47,7 +51,8 @@ class Saml2ServiceProvider extends ServiceProvider
             if (empty($config['sp']['assertionConsumerService']['url'])) {
                 $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs');
             }
-            if (empty($config['sp']['singleLogoutService']['url'])) {
+            if (!empty($config['sp']['singleLogoutService']) &&
+                 empty($config['sp']['singleLogoutService']['url'])) {
                 $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
             }
 

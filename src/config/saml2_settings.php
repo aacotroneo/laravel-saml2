@@ -64,7 +64,13 @@ return $settings = array(
     'strict' => true, //@todo: make this depend on laravel config
 
     // Enable debug mode (to print errors)
-    'debug' => false, //@todo: make this depend on laravel config
+    'debug' => false, //@todo: make this depend on laravel config,
+
+    // If 'proxyVars' is True, then the Saml lib will trust proxy headers
+    // e.g X-Forwarded-Proto / HTTP_X_FORWARDED_PROTO. This is useful if
+    // your application is running behind a load balancer which terminates
+    // SSL.
+    'proxyVars' => false,
 
     // Service Provider Data that we are deploying
     'sp' => array(
@@ -93,6 +99,7 @@ return $settings = array(
         ),
         // Specifies info about where and how the <Logout Response> message MUST be
         // returned to the requester, in this case our SP.
+        // Remove this part to not include any URL Location in the metadata.
         'singleLogoutService' => array(
             // URL Location where the <Response> from the IdP will be returned,
             // using HTTP-Redirect binding.

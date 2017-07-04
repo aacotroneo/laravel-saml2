@@ -112,6 +112,16 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($error);
     }
 
+    public function testCanGetLastError()
+    {
+        $auth = m::mock('OneLogin_Saml2_Auth');
+        $saml2 = new Saml2Auth($auth);
+
+        $auth->shouldReceive('getLastErrorReason')->andReturn('lastError');
+
+        $this->assertSame('lastError', $saml2->getLastErrorReason());
+    }
+
 /**
          * Cant test here. It uses Laravel dependencies (eg. config())
          */

@@ -42,8 +42,18 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerOneLoginInContainer();
 
         $this->app->singleton('Aacotroneo\Saml2\Saml2Auth', function ($app) {
+
+            return new \Aacotroneo\Saml2\Saml2Auth($app['OneLogin_Saml2_Auth']);
+        });
+
+    }
+
+    protected function registerOneLoginInContainer()
+    {
+        $this->app->singleton('OneLogin_Saml2_Auth', function ($app) {
             $config = config('saml2_settings');
             if (empty($config['sp']['entityId'])) {
                 $config['sp']['entityId'] = URL::route('saml_metadata');
@@ -52,15 +62,12 @@ class Saml2ServiceProvider extends ServiceProvider
                 $config['sp']['assertionConsumerService']['url'] = URL::route('saml_acs');
             }
             if (!empty($config['sp']['singleLogoutService']) &&
-                 empty($config['sp']['singleLogoutService']['url'])) {
+                empty($config['sp']['singleLogoutService']['url'])) {
                 $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
             }
 
-            $auth = new OneLogin_Saml2_Auth($config);
-
-            return new \Aacotroneo\Saml2\Saml2Auth($auth);
+            return new OneLogin_Saml2_Auth($config);
         });
-
     }
 
     /**

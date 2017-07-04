@@ -68,11 +68,11 @@ class Saml2Auth
      * Initiate a saml2 logout flow. It will close session on all other SSO services. You should close
      * local session if applicable.
      */
-    function logout($returnTo = null, $nameId = null, $sessionIndex = null)
+    function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null)
     {
         $auth = $this->auth;
 
-        $auth->logout($returnTo, [], $nameId, $sessionIndex);
+        $auth->logout($returnTo, [], $nameId, $sessionIndex, false, $nameIdFormat);
     }
 
     /**

@@ -24,5 +24,15 @@
             "Aacotroneo\\Saml2\\": "src/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Aacotroneo\\Saml2\\Saml2ServiceProvider"
+            ],
+            "aliases": {
+                "Saml2": "Aacotroneo\\Saml2\\Facades\\Saml2Auth"
+            }
+        }
+    },
     "minimum-stability": "stable"
 }

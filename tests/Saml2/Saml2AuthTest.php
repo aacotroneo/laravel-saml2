@@ -123,6 +123,53 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('lastError', $saml2->getLastErrorReason());
     }
 
+    public function testGetUserAttribute() {
+        $auth = m::mock('OneLogin_Saml2_Auth');
+        $saml2 = new Saml2Auth($auth);
+
+        $user = $saml2->getSaml2User();
+
+        $auth->shouldReceive('getAttribute')
+            ->with('urn:oid:0.9.2342.19200300.100.1.3')
+            ->andReturn(['test@example.com']);
+
+        $this->assertEquals(['test@example.com'], $user->getAttribute('urn:oid:0.9.2342.19200300.100.1.3'));
+    }
+
+    public function testParseSingleUserAttribute() {
+        $auth = m::mock('OneLogin_Saml2_Auth');
+        $saml2 = new Saml2Auth($auth);
+
+        $user = $saml2->getSaml2User();
+
+        $auth->shouldReceive('getAttribute')
+            ->with('urn:oid:0.9.2342.19200300.100.1.3')
+            ->andReturn(['test@example.com']);
+
+        $user->parseUserAttribute('urn:oid:0.9.2342.19200300.100.1.3', 'email');
+
+        $this->assertEquals($user->email, ['test@example.com']);
+    }
+
+    public function testParseMultipleUserAttributes() {
+        $auth = m::mock('OneLogin_Saml2_Auth');
+        $saml2 = new Saml2Auth($auth);
+
+        $user = $saml2->getSaml2User();
+
+        $auth->shouldReceive('getAttribute')
+            ->twice()
+            ->andReturn(['test@example.com'], ['Test User']);
+
+        $user->parseAttributes([
+            'email' => 'urn:oid:0.9.2342.19200300.100.1.3',
+            'displayName' => 'urn:oid:2.16.840.1.113730.3.1.241'
+        ]);
+
+        $this->assertEquals($user->email, ['test@example.com']);
+        $this->assertEquals($user->displayName, ['Test User']);
+    }
+
 /**
          * Cant test here. It uses Laravel dependencies (eg. config())
          */

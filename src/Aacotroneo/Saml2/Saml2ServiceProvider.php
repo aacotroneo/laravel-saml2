@@ -65,6 +65,15 @@ class Saml2ServiceProvider extends ServiceProvider
                 empty($config['sp']['singleLogoutService']['url'])) {
                 $config['sp']['singleLogoutService']['url'] = URL::route('saml_sls');
             }
+            if (strpos($config['sp']['privateKey'], 'file://')===0) {
+                $config['sp']['privateKey'] = $this->extractPkeyFromFile($config['sp']['privateKey']);
+            }
+            if (strpos($config['sp']['x509cert'], 'file://')===0) {
+                $config['sp']['x509cert'] = $this->extractCertFromFile($config['sp']['x509cert']);
+            }
+            if (strpos($config['idp']['x509cert'], 'file://')===0) {
+                $config['idp']['x509cert'] = $this->extractCertFromFile($config['idp']['x509cert']);
+            }
 
             return new OneLogin_Saml2_Auth($config);
         });
@@ -80,4 +89,30 @@ class Saml2ServiceProvider extends ServiceProvider
         return array();
     }
 
+    protected function extractPkeyFromFile($path) {
+        $res = openssl_get_privatekey($path);
+        if (empty($res)) {
+            throw new \Exception('Could not read private key-file at path \'' . $path . '\'');
+        }
+        openssl_pkey_export($res, $pkey);
+        openssl_pkey_free($res);
+        return $this->extractOpensslString($pkey, 'PRIVATE KEY');
+    }
+
+    protected function extractCertFromFile($path) {
+        $res = openssl_x509_read(file_get_contents($path));
+        if (empty($res)) {
+            throw new \Exception('Could not read X509 certificate-file at path \'' . $path . '\'');
+        }
+        openssl_x509_export($res, $cert);
+        openssl_x509_free($res);
+        return $this->extractOpensslString($cert, 'CERTIFICATE');
+    }
+
+    protected function extractOpensslString($keyString, $delimiter) {
+        $keyString = str_replace(["\r", "\n"], "", $keyString);
+        $regex = '/-{5}BEGIN(?:\s|\w)+' . $delimiter . '-{5}\s*(.+?)\s*-{5}END(?:\s|\w)+' . $delimiter . '-{5}/m';
+        preg_match($regex, $keyString, $matches);
+        return empty($matches[1]) ? '' : $matches[1];
+    }
 }

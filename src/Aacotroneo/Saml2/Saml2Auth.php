@@ -57,11 +57,11 @@ class Saml2Auth
      * Initiate a saml2 login flow. It will redirect! Before calling this, check if user is
      * authenticated (here in saml2). That would be true when the assertion was received this request.
      */
-    function login($returnTo = null, $parameters = array())
+    function login($returnTo = null, $parameters = array(), $forceAuthn = false, $isPassive = false, $stay = false, $setNameIdPolicy = true)
     {
         $auth = $this->auth;
 
-        $auth->login($returnTo, $parameters);
+        $auth->login($returnTo, $parameters, $forceAuthn, $isPassive, $stay, $setNameIdPolicy);
     }
 
     /**

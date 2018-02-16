@@ -56,17 +56,35 @@ class Saml2Auth
     /**
      * Initiate a saml2 login flow. It will redirect! Before calling this, check if user is
      * authenticated (here in saml2). That would be true when the assertion was received this request.
+     *
+     * @param string|null $returnTo        The target URL the user should be returned to after login.
+     * @param array       $parameters      Extra parameters to be added to the GET
+     * @param bool        $forceAuthn      When true the AuthNReuqest will set the ForceAuthn='true'
+     * @param bool        $isPassive       When true the AuthNReuqest will set the Ispassive='true'
+     * @param bool        $stay            True if we want to stay (returns the url string) False to redirect
+     * @param bool        $setNameIdPolicy When true the AuthNReuqest will set a nameIdPolicy element
+     *
+     * @return string|null If $stay is True, it return a string with the SLO URL + LogoutRequest + parameters
      */
     function login($returnTo = null, $parameters = array(), $forceAuthn = false, $isPassive = false, $stay = false, $setNameIdPolicy = true)
     {
         $auth = $this->auth;
 
-        $auth->login($returnTo, $parameters, $forceAuthn, $isPassive, $stay, $setNameIdPolicy);
+        return $auth->login($returnTo, $parameters, $forceAuthn, $isPassive, $stay, $setNameIdPolicy);
     }
 
     /**
      * Initiate a saml2 logout flow. It will close session on all other SSO services. You should close
      * local session if applicable.
+     *
+     * @param string|null $returnTo            The target URL the user should be returned to after logout.
+     * @param string|null $nameId              The NameID that will be set in the LogoutRequest.
+     * @param string|null $sessionIndex        The SessionIndex (taken from the SAML Response in the SSO process).
+     * @param string|null $nameIdFormat        The NameID Format will be set in the LogoutRequest.
+     *
+     * @return string|null If $stay is True, it return a string with the SLO URL + LogoutRequest + parameters
+     *
+     * @throws OneLogin_Saml2_Error
      */
     function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null)
     {

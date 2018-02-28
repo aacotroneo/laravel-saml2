@@ -15,7 +15,7 @@
         "php": ">=5.4.0",
         "ext-openssl": "*",
         "illuminate/support": ">=5.0.0",
-        "onelogin/php-saml": "^2.10"
+        "onelogin/php-saml": "3.0.0.x-dev"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*"
@@ -35,5 +35,12 @@
             }
         }
     },
-    "minimum-stability": "stable"
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/onelogin/php-saml"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

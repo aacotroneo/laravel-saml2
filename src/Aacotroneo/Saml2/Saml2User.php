@@ -2,7 +2,7 @@
 
 namespace Aacotroneo\Saml2;
 
-use OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Auth;
 
 /**
  * A simple class that represents the user that 'came' inside the saml2 assertion
@@ -14,7 +14,7 @@ class Saml2User
 
     protected $auth;
 
-    function __construct(OneLogin_Saml2_Auth $auth)
+    function __construct(Auth $auth)
     {
         $this->auth = $auth;
     }

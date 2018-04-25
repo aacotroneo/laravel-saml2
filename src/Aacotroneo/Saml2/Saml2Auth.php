@@ -2,9 +2,9 @@
 
 namespace Aacotroneo\Saml2;
 
-use OneLogin_Saml2_Auth;
-use OneLogin_Saml2_Error;
-use OneLogin_Saml2_Utils;
+use OneLogin\Saml2\Auth;
+use OneLogin\Saml2\Error;
+use OneLogin\Saml2\Utils;
 use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 
 use Log;
@@ -20,7 +20,7 @@ class Saml2Auth
 
     protected $samlAssertion;
 
-    function __construct(OneLogin_Saml2_Auth $auth)
+    function __construct(Auth $auth)
     {
         $this->auth = $auth;
     }
@@ -84,7 +84,7 @@ class Saml2Auth
      *
      * @return string|null If $stay is True, it return a string with the SLO URL + LogoutRequest + parameters
      *
-     * @throws OneLogin_Saml2_Error
+     * @throws Error
      */
     function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null)
     {
@@ -159,7 +159,7 @@ class Saml2Auth
 
             throw new InvalidArgumentException(
                 'Invalid SP metadata: ' . implode(', ', $errors),
-                OneLogin_Saml2_Error::METADATA_SP_INVALID
+                Error::METADATA_SP_INVALID
             );
         }
     }

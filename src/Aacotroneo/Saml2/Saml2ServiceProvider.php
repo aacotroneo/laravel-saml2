@@ -32,7 +32,7 @@ class Saml2ServiceProvider extends ServiceProvider
         ]);
 
         if (config('saml2_settings.proxyVars', false)) {
-            \OneLogin_Saml2_Utils::setProxyVars(true);
+            \OneLogin\Saml2\Utils::setProxyVars(true);
         }
     }
 

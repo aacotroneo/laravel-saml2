@@ -108,6 +108,38 @@ The Saml2::login will redirect the user to the IDP and will came back to an endp
         });
 
 ```
+### Auth persistence
+
+Becarefull about necessary Laravel middleware for Auth persistence in Session.
+
+For exemple, it can be:
+
+```
+# in App\Http\Kernel
+protected $middlewareGroups = [
+        'web' => [
+	    ...
+	],
+	'api' => [
+            ...
+        ],
+        'saml' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+        ],
+
+```
+
+And in `config/saml2_settings.php` :
+```
+    /**
+     * which middleware group to use for the saml routes
+     * Laravel 5.2 will need a group which includes StartSession
+     */
+    'routesMiddleware' => ['saml'],
+```
+
 ### Log out
 Now there are two ways the user can log out.
  + 1 - By logging out in your app: In this case you 'should' notify the IDP first so it closes global session.

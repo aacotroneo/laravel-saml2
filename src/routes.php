@@ -2,8 +2,8 @@
 
 
 Route::group([
-    'prefix' => config('saml2_settings.routesPrefix'),
-    'middleware' => config('saml2_settings.routesMiddleware'),
+    'prefix' => config('saml2.routesPrefix'),
+    'middleware' => config('saml2.routesMiddleware'),
 ], function () {
 
     Route::get('/logout', array(

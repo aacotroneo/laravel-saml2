@@ -23,15 +23,15 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(config('saml2_settings.useRoutes', false) == true ){
+        if(config('saml2.useRoutes', false) == true ){
             include __DIR__ . '/../../routes.php';
         }
 
         $this->publishes([
-            __DIR__.'/../../config/saml2_settings.php' => config_path('saml2_settings.php'),
+            __DIR__.'/../../config/saml2.php' => config_path('saml2.php'),
         ]);
 
-        if (config('saml2_settings.proxyVars', false)) {
+        if (config('saml2.proxyVars', false)) {
             \OneLogin\Saml2\Utils::setProxyVars(true);
         }
     }
@@ -55,7 +55,7 @@ class Saml2ServiceProvider extends ServiceProvider
     protected function registerOneLoginInContainer()
     {
         $this->app->singleton('OneLogin_Saml2_Auth', function ($app) {
-            $config = config('saml2_settings');
+            $config = config('saml2');
             if (empty($config['sp']['entityId'])) {
                 $config['sp']['entityId'] = URL::route('saml_metadata');
             }

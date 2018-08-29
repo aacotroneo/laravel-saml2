@@ -7,29 +7,34 @@ use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 
-
 class Saml2Controller extends Controller
 {
-
-    protected $saml2Auth;
+    /**
+     * Saml2Auth implementation.
+     *
+     * @var \Aacotroneo\Saml2\Saml2Auth
+     */
+    protected $auth;
 
     /**
-     * @param Saml2Auth $saml2Auth injected.
+     * Create a new controller instance.
+     *
+     * @param  \Aacotroneo\Saml2\Saml2Auth  $auth
+     * @return void
      */
-    function __construct(Saml2Auth $saml2Auth)
+    function __construct(Saml2Auth $auth)
     {
-        $this->saml2Auth = $saml2Auth;
+        $this->auth = $auth;
     }
-
 
     /**
      * Generate local sp metadata
+     * 
      * @return \Illuminate\Http\Response
      */
     public function metadata()
     {
-
-        $metadata = $this->saml2Auth->getMetadata();
+        $metadata = $this->auth->getMetadata();
 
         return response($metadata, 200, ['Content-Type' => 'text/xml']);
     }
@@ -40,26 +45,25 @@ class Saml2Controller extends Controller
      */
     public function acs()
     {
-        $errors = $this->saml2Auth->acs();
+        $errors = $this->auth->acs();
 
         if (!empty($errors)) {
-            logger()->error('Saml2 error_detail', ['error' => $this->saml2Auth->getLastErrorReason()]);
-            session()->flash('saml2_error_detail', [$this->saml2Auth->getLastErrorReason()]);
+            logger()->error('Saml2 error_detail', ['error' => $this->auth->getLastErrorReason()]);
+            session()->flash('saml2_error_detail', [$this->auth->getLastErrorReason()]);
 
             logger()->error('Saml2 error', $errors);
             session()->flash('saml2_error', $errors);
             return redirect(config('saml2.errorRoute'));
         }
-        $user = $this->saml2Auth->getSaml2User();
+        $user = $this->auth->getSaml2User();
 
-        event(new Saml2LoginEvent($user, $this->saml2Auth));
+        event(new Saml2LoginEvent($user, $this->auth));
 
         $redirectUrl = $user->getIntendedUrl();
 
         if ($redirectUrl !== null) {
             return redirect($redirectUrl);
         } else {
-
             return redirect(config('saml2.loginRoute'));
         }
     }
@@ -71,7 +75,7 @@ class Saml2Controller extends Controller
      */
     public function sls()
     {
-        $error = $this->saml2Auth->sls(config('saml2.retrieveParametersFromServer'));
+        $error = $this->auth->sls(config('saml2.retrieveParametersFromServer'));
         if (!empty($error)) {
             throw new \Exception("Could not log out");
         }
@@ -87,17 +91,15 @@ class Saml2Controller extends Controller
         $returnTo = $request->query('returnTo');
         $sessionIndex = $request->query('sessionIndex');
         $nameId = $request->query('nameId');
-        $this->saml2Auth->logout($returnTo, $nameId, $sessionIndex); //will actually end up in the sls endpoint
+        $this->auth->logout($returnTo, $nameId, $sessionIndex); //will actually end up in the sls endpoint
         //does not return
     }
-
 
     /**
      * This initiates a login request
      */
     public function login()
     {
-        $this->saml2Auth->login(config('saml2.loginRoute'));
+        $this->auth->login(config('saml2.loginRoute'));
     }
-
 }

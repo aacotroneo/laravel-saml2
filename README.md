@@ -39,19 +39,7 @@ Then publish the config file with `php artisan vendor:publish`. This will add th
 
 Once you publish your saml2.php to your own files, you need to configure your sp and IDP (remote server). The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are injected by the library. They are taken from routes 'saml_metadata', 'saml_acs' and 'saml_sls' respectively.
 
-Remember that you don't need to implement those routes, but you'll need to add them to your IDP configuration. For example, if you use simplesamlphp, add the following to /metadata/sp-remote.php
-
-```php
-$metadata['http://laravel_url/saml2/metadata'] = array(
-    'AssertionConsumerService' => 'http://laravel_url/saml2/acs',
-    'SingleLogoutService' => 'http://laravel_url/saml2/sls',
-    //the following two affect what the $Saml2user->getUserId() will return
-    'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-    'simplesaml.nameidattribute' => 'uid' 
-);
-```
-You can check that metadata if you actually navigate to 'http://laravel_url/saml2/metadata'
-
+Remember that you don't need to implement those routes, but you'll need to add them to your IDP configuration.
 
 ### Usage
 

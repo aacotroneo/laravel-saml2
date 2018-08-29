@@ -24,10 +24,7 @@ class Saml2User
      */
     function getUserId()
     {
-        $auth = $this->auth;
-
-        return $auth->getNameId();
-
+        return $this->auth->getNameId();
     }
 
     /**
@@ -35,9 +32,7 @@ class Saml2User
      */
     function getAttributes()
     {
-        $auth = $this->auth;
-
-        return $auth->getAttributes();
+        return $this->auth->getAttributes();
     }
 
     /**
@@ -46,10 +41,9 @@ class Saml2User
      * @param string $name The requested attribute of the user.
      * @return array|null Requested SAML attribute ($name).
      */
-    function getAttribute($name) {
-        $auth = $this->auth;
-
-        return $auth->getAttribute($name);
+    function getAttribute($name)
+    {
+        return $this->auth->getAttribute($name);
     }
 
     /**
@@ -80,10 +74,10 @@ class Saml2User
      * @return array|null
      */
     function parseUserAttribute($samlAttribute = null, $propertyName = null) {
-        if(empty($samlAttribute)) {
+        if (empty($samlAttribute)) {
             return null;
         }
-        if(empty($propertyName)) {
+        if (empty($propertyName)) {
             return $this->getAttribute($samlAttribute);
         }
 
@@ -95,8 +89,8 @@ class Saml2User
      *
      * @param array $attributes Array of properties which need to be parsed, like this ['email' => 'urn:oid:0.9.2342.19200300.100.1.3']
      */
-    function parseAttributes($attributes = array()) {
-        foreach($attributes as $propertyName => $samlAttribute) {
+    function parseAttributes($attributes = []) {
+        foreach ($attributes as $propertyName => $samlAttribute) {
             $this->parseUserAttribute($samlAttribute, $propertyName);
         }
     }

@@ -81,16 +81,18 @@ class Saml2Auth
      * @param string|null $nameId              The NameID that will be set in the LogoutRequest.
      * @param string|null $sessionIndex        The SessionIndex (taken from the SAML Response in the SSO process).
      * @param string|null $nameIdFormat        The NameID Format will be set in the LogoutRequest.
+     * @param bool        $stay            True if we want to stay (returns the url string) False to redirect
+     * @param string|null $nameIdNameQualifier The NameID NameQualifier will be set in the LogoutRequest.
      *
      * @return string|null If $stay is True, it return a string with the SLO URL + LogoutRequest + parameters
      *
      * @throws OneLogin_Saml2_Error
      */
-    function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null)
+    function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null, $stay = false, $nameIdNameQualifier = null)
     {
         $auth = $this->auth;
 
-        $auth->logout($returnTo, [], $nameId, $sessionIndex, false, $nameIdFormat);
+        return $auth->logout($returnTo, [], $nameId, $sessionIndex, $stay, $nameIdFormat, $nameIdNameQualifier);
     }
 
     /**

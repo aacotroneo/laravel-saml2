@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use OneLogin\Saml2\Auth;
-use OneLogin\Saml2\Utils;
+use OneLogin\Saml2\Utils as OneLoginUtils;
 
 class Saml2ServiceProvider extends ServiceProvider
 {
@@ -19,8 +19,7 @@ class Saml2ServiceProvider extends ServiceProvider
         $this->registerRoutes();
 
         if (config('saml2.proxyVars', false)) {
-            // TODO: what is this for?
-            Utils::setProxyVars(true);
+            OneLoginUtils::setProxyVars(true);
         }
     }
 
@@ -49,69 +48,44 @@ class Saml2ServiceProvider extends ServiceProvider
     {
         $this->offerPublishing();
 
-        $this->registerOneLoginInContainer();
+        $this->app->singleton(Auth::class, function ($app) {
+            return new Auth($this->getAuthConfig());
+        });
 
+        // Should only register a single class in the Service Container probably
         $this->app->singleton(Saml2Auth::class, function ($app) {
-            // TODO: this layering of dependencies is probably not desirable
             return new Saml2Auth($app->make(Auth::class));
         });
 
     }
 
-    protected function registerOneLoginInContainer()
+    protected function getAuthConfig()
     {
-        // TODO: this makes me very sad
-        $this->app->singleton(Auth::class, function ($app) {
-            $config = config('saml2');
-            if (empty($config['sp']['entityId'])) {
-                $config['sp']['entityId'] = URL::route('saml2.metadata');
-            }
-            if (empty($config['sp']['assertionConsumerService']['url'])) {
-                $config['sp']['assertionConsumerService']['url'] = URL::route('saml2.acs');
-            }
-            if (!empty($config['sp']['singleLogoutService']) &&
-                empty($config['sp']['singleLogoutService']['url'])) {
-                $config['sp']['singleLogoutService']['url'] = URL::route('saml2.sls');
-            }
-            if (strpos($config['sp']['privateKey'], 'file://') === 0) {
-                $config['sp']['privateKey'] = $this->extractPkeyFromFile($config['sp']['privateKey']);
-            }
-            if (strpos($config['sp']['x509cert'], 'file://') === 0) {
-                $config['sp']['x509cert'] = $this->extractCertFromFile($config['sp']['x509cert']);
-            }
-            if (strpos($config['idp']['x509cert'], 'file://') === 0) {
-                $config['idp']['x509cert'] = $this->extractCertFromFile($config['idp']['x509cert']);
-            }
+        // TODO: We probably want to feed our wrapper class the Laravel config
+        // and then do the manipulation outside of the Service Provider
+        // (then we can test this behaviour as well +1)
+        $config = config('saml2');
 
-            return new Auth($config);
-        });
-    }
+        $config['sp']['entityId'] = URL::route('saml2.metadata');
+        $config['sp']['assertionConsumerService']['url'] = URL::route('saml2.acs');
+        $config['sp']['singleLogoutService']['url'] = URL::route('saml2.sls');
 
-    protected function extractPkeyFromFile($path) {
-        $res = openssl_get_privatekey($path);
-        if (empty($res)) {
-            throw new \Exception('Could not read private key-file at path \'' . $path . '\'');
+        // Do we really want to support file:// paths like this?
+        if (strpos($config['sp']['privateKey'], 'file://') === 0) {
+            // OneLogin saml will format the key for us, no need to do any of this...
+            $config['sp']['privateKey'] = ExtractOpenssl::privatekeyFromFile($config['sp']['privateKey']);
         }
-        openssl_pkey_export($res, $pkey);
-        openssl_pkey_free($res);
-        return $this->extractOpensslString($pkey, 'PRIVATE KEY');
-    }
-
-    protected function extractCertFromFile($path) {
-        $res = openssl_x509_read(file_get_contents($path));
-        if (empty($res)) {
-            throw new \Exception('Could not read X509 certificate-file at path \'' . $path . '\'');
+        if (strpos($config['sp']['x509cert'], 'file://') === 0) {
+            // OneLogin saml will format the cert for us, no need to do any of this...
+            $config['sp']['x509cert'] = ExtractOpenssl::certFromFile($config['sp']['x509cert']);
         }
-        openssl_x509_export($res, $cert);
-        openssl_x509_free($res);
-        return $this->extractOpensslString($cert, 'CERTIFICATE');
-    }
+        
+        if (strpos($config['idp']['x509cert'], 'file://') === 0) {
+            // OneLogin saml will format the cert for us, no need to do any of this...
+            $config['idp']['x509cert'] = ExtractOpenssl::certFromFile($config['idp']['x509cert']);
+        }
 
-    protected function extractOpensslString($keyString, $delimiter) {
-        $keyString = str_replace(["\r", "\n"], "", $keyString);
-        $regex = '/-{5}BEGIN(?:\s|\w)+' . $delimiter . '-{5}\s*(.+?)\s*-{5}END(?:\s|\w)+' . $delimiter . '-{5}/m';
-        preg_match($regex, $keyString, $matches);
-        return empty($matches[1]) ? '' : $matches[1];
+        return $config;
     }
 
     /**

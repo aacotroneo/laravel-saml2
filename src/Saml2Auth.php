@@ -5,16 +5,13 @@ namespace Aacotroneo\Saml2;
 use OneLogin\Saml2\Auth;
 use OneLogin\Saml2\Error;
 use OneLogin\Saml2\Utils;
-use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
-
-use Log;
-use Psr\Log\InvalidArgumentException;
+use InvalidArgumentException;
 
 class Saml2Auth
 {
 
     /**
-     * @var \OneLogin_Saml2_Auth
+     * @var \OneLogin\Saml2\Auth
      */
     protected $auth;
 
@@ -30,13 +27,12 @@ class Saml2Auth
      */
     function isAuthenticated()
     {
-        $auth = $this->auth;
-
-        return $auth->isAuthenticated();
+        return $this->auth->isAuthenticated();
     }
 
     /**
      * The user info from the assertion
+     * 
      * @return Saml2User
      */
     function getSaml2User()
@@ -46,7 +42,8 @@ class Saml2Auth
 
     /**
      * The ID of the last message processed
-     * @return String
+     * 
+     * @return string
      */
     function getLastMessageId()
     {
@@ -66,11 +63,9 @@ class Saml2Auth
      *
      * @return string|null If $stay is True, it return a string with the SLO URL + LogoutRequest + parameters
      */
-    function login($returnTo = null, $parameters = array(), $forceAuthn = false, $isPassive = false, $stay = false, $setNameIdPolicy = true)
+    function login($returnTo = null, $parameters = [], $forceAuthn = false, $isPassive = false, $stay = false, $setNameIdPolicy = true)
     {
-        $auth = $this->auth;
-
-        return $auth->login($returnTo, $parameters, $forceAuthn, $isPassive, $stay, $setNameIdPolicy);
+        return $this->auth->login($returnTo, $parameters, $forceAuthn, $isPassive, $stay, $setNameIdPolicy);
     }
 
     /**
@@ -88,9 +83,7 @@ class Saml2Auth
      */
     function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null)
     {
-        $auth = $this->auth;
-
-        $auth->logout($returnTo, [], $nameId, $sessionIndex, false, $nameIdFormat);
+        $this->auth->logout($returnTo, [], $nameId, $sessionIndex, false, $nameIdFormat);
     }
 
     /**
@@ -99,20 +92,16 @@ class Saml2Auth
      */
     function acs()
     {
+        $this->auth->processResponse();
 
-        /** @var $auth OneLogin_Saml2_Auth */
-        $auth = $this->auth;
-
-        $auth->processResponse();
-
-        $errors = $auth->getErrors();
+        $errors = $this->auth->getErrors();
 
         if (!empty($errors)) {
             return $errors;
         }
 
-        if (!$auth->isAuthenticated()) {
-            return array('error' => 'Could not authenticate');
+        if (!$this->auth->isAuthenticated()) {
+            return ['error' => 'Could not authenticate'];
         }
 
         return null;
@@ -125,17 +114,15 @@ class Saml2Auth
      */
     function sls($retrieveParametersFromServer = false)
     {
-        $auth = $this->auth;
-
         // destroy the local session by firing the Logout event
         $keep_local_session = false;
         $session_callback = function () {
-            event(new Saml2LogoutEvent());
+            event(new Events\Saml2LogoutEvent());
         };
 
-        $auth->processSLO($keep_local_session, null, $retrieveParametersFromServer, $session_callback);
+        $this->auth->processSLO($keep_local_session, null, $retrieveParametersFromServer, $session_callback);
 
-        $errors = $auth->getErrors();
+        $errors = $this->auth->getErrors();
 
         return $errors;
     }
@@ -147,16 +134,13 @@ class Saml2Auth
      */
     function getMetadata()
     {
-        $auth = $this->auth;
-        $settings = $auth->getSettings();
+        $settings = $this->auth->getSettings();
         $metadata = $settings->getSPMetadata();
         $errors = $settings->validateMetadata($metadata);
 
         if (empty($errors)) {
-
             return $metadata;
         } else {
-
             throw new InvalidArgumentException(
                 'Invalid SP metadata: ' . implode(', ', $errors),
                 Error::METADATA_SP_INVALID
@@ -165,8 +149,8 @@ class Saml2Auth
     }
 
     /**
-     * Get the last error reason from \OneLogin_Saml2_Auth, useful for error debugging.
-     * @see \OneLogin_Saml2_Auth::getLastErrorReason()
+     * Get the last error reason from \OneLogin\Saml2\Auth, useful for error debugging.
+     * @see \OneLogin\Saml2\Auth::getLastErrorReason()
      * @return string
      */
     function getLastErrorReason() {

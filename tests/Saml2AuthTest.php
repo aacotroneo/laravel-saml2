@@ -1,38 +1,38 @@
 <?php
 
-namespace Aacotroneo\Saml2;
+namespace Tests;
 
-
-use App;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Aacotroneo\Saml2\Saml2Auth;
 
-class Saml2AuthTest extends \PHPUnit_Framework_TestCase
+class Saml2AuthTest extends TestCase
 {
-
-
     public function tearDown()
     {
         m::close();
     }
 
-
     public function testIsAuthenticated()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
 
         $auth->shouldReceive('isAuthenticated')->andReturn('return');
 
         $this->assertEquals('return', $saml2->isAuthenticated());
-
     }
 
     public function testLogin()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
+
         $auth->shouldReceive('login')->once();
         $saml2->login();
+
+        // TODO: better assertion...
+        $this->assertTrue(true);
     }
 
     public function testLogout()
@@ -41,31 +41,34 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
         $expectedSessionIndex = 'session_index_value';
         $expectedNameId = 'name_id_value';
         $expectedNameIdFormat = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified';
-        $auth = m::mock('OneLogin_Saml2_Auth');
+
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
+
         $auth->shouldReceive('logout')
             ->with($expectedReturnTo, [], $expectedNameId, $expectedSessionIndex, false, $expectedNameIdFormat)
             ->once();
         $saml2->logout($expectedReturnTo, $expectedNameId, $expectedSessionIndex, $expectedNameIdFormat);
+        
+        // TODO: better assertion...
+        $this->assertTrue(true);
     }
-
 
     public function testAcsError()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processResponse')->once();
-        $auth->shouldReceive('getErrors')->once()->andReturn(array('errors'));
+        $auth->shouldReceive('getErrors')->once()->andReturn(['errors']);
 
         $error = $saml2->acs();
 
         $this->assertNotEmpty($error);
     }
 
-
     public function testAcsNotAutenticated()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processResponse')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(null);
@@ -75,10 +78,9 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($error);
     }
 
-
     public function testAcsOK()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processResponse')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(null);
@@ -91,7 +93,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testSlsError()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processSLO')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn('errors');
@@ -103,7 +105,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testSlsOK()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processSLO')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(null);
@@ -115,7 +117,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testCanGetLastError()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
 
         $auth->shouldReceive('getLastErrorReason')->andReturn('lastError');
@@ -124,7 +126,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGetUserAttribute() {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
 
         $user = $saml2->getSaml2User();
@@ -137,7 +139,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testParseSingleUserAttribute() {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
 
         $user = $saml2->getSaml2User();
@@ -152,7 +154,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testParseMultipleUserAttributes() {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock(\OneLogin\Saml2\Auth::class);
         $saml2 = new Saml2Auth($auth);
 
         $user = $saml2->getSaml2User();
@@ -176,25 +178,24 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
 //        $app = m::mock('Illuminate\Contracts\Foundation\Application[register,setDeferredServices]');
 //
-//        $s = m::mock('Aacotroneo\Saml2\Saml2ServiceProvider[publishes]', array($app));
+//        $s = m::mock('Aacotroneo\Saml2\Saml2ServiceProvider[publishes]', [$app]);
 //        $s->boot();
 //        $s->shouldReceive('publishes');
 //
 
-//        $repo = m::mock('Illuminate\Foundation\ProviderRepository[createProvider,loadManifest,shouldRecompile]', array($app, m::mock('Illuminate\Filesystem\Filesystem'), array(__DIR__.'/services.json')));
-//        $repo->shouldReceive('loadManifest')->once()->andReturn(array('eager' => array('foo'), 'deferred' => array('deferred'), 'providers' => array('providers'), 'when' => array()));
+//        $repo = m::mock('Illuminate\Foundation\ProviderRepository[createProvider,loadManifest,shouldRecompile]', [$app, m::mock('Illuminate\Filesystem\Filesystem'], [__DIR__.'/services.json']));
+//        $repo->shouldReceive('loadManifest')->once()->andReturn(['eager' => ['foo'], 'deferred' => ['deferred'], 'providers' => ['providers'], 'when' => []]);
 //        $repo->shouldReceive('shouldRecompile')->once()->andReturn(false);
 //        $provider = m::mock('Illuminate\Support\ServiceProvider');
 //        $repo->shouldReceive('createProvider')->once()->with('foo')->andReturn($provider);
 //        $app->shouldReceive('register')->once()->with($provider);
 //        $app->shouldReceive('runningInConsole')->andReturn(false);
-//        $app->shouldReceive('setDeferredServices')->once()->with(array('deferred'));
-//        $repo->load(array());
+//        $app->shouldReceive('setDeferredServices')->once()->with(['deferred']);
+//        $repo->load([]);
 //        $s = new Saml2ServiceProvider();
 //
-//        $mock = \Mockery::mock(array('pi' => 3.1, 'e' => 2.71));
+//        $mock = \Mockery::mock(['pi' => 3.1, 'e' => 2.71]);
 //        $this->assertEquals(3.1416, $mock->pi());
 //        $this->assertEquals(2.71, $mock->e());
 
 }
-

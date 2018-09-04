@@ -17,7 +17,6 @@ before_install:
   - travis_retry composer self-update
 
 install:
-  - composer diagnose
-  - composer install --prefer-dist --no-interaction --no-suggest -vvv
+  - composer install --prefer-dist --no-interaction --no-suggest
 
 script: vendor/bin/phpunit

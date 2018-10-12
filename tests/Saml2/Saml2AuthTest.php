@@ -5,8 +5,9 @@ namespace Aacotroneo\Saml2;
 
 use App;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class Saml2AuthTest extends \PHPUnit_Framework_TestCase
+class Saml2AuthTest extends TestCase
 {
 
 

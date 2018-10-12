@@ -5,8 +5,9 @@ namespace Aacotroneo\Saml2;
 
 use App;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class Saml2AuthTest extends \PHPUnit_Framework_TestCase
+class Saml2AuthTest extends TestCase
 {
 
 
@@ -18,7 +19,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testIsAuthenticated()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
 
         $auth->shouldReceive('isAuthenticated')->andReturn('return');
@@ -29,7 +30,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testLogin()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('login')->once();
         $saml2->login();
@@ -43,7 +44,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
         $expectedNameIdFormat = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified';
         $expectedStay = true;
         $expectedNameIdNameQualifier = 'name_id_name_qualifier';
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('logout')
             ->with($expectedReturnTo, [], $expectedNameId, $expectedSessionIndex, $expectedStay, $expectedNameIdFormat, $expectedNameIdNameQualifier)
@@ -54,7 +55,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testAcsError()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processResponse')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(array('errors'));
@@ -67,7 +68,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testAcsNotAutenticated()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processResponse')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(null);
@@ -80,7 +81,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testAcsOK()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processResponse')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(null);
@@ -93,7 +94,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testSlsError()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processSLO')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn('errors');
@@ -105,7 +106,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testSlsOK()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
         $auth->shouldReceive('processSLO')->once();
         $auth->shouldReceive('getErrors')->once()->andReturn(null);
@@ -117,7 +118,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
 
     public function testCanGetLastError()
     {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
 
         $auth->shouldReceive('getLastErrorReason')->andReturn('lastError');
@@ -126,7 +127,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGetUserAttribute() {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
 
         $user = $saml2->getSaml2User();
@@ -139,7 +140,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testParseSingleUserAttribute() {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
 
         $user = $saml2->getSaml2User();
@@ -154,7 +155,7 @@ class Saml2AuthTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testParseMultipleUserAttributes() {
-        $auth = m::mock('OneLogin_Saml2_Auth');
+        $auth = m::mock('OneLogin\Saml2\Auth');
         $saml2 = new Saml2Auth($auth);
 
         $user = $saml2->getSaml2User();

@@ -1,7 +1,8 @@
 <?php
 namespace Aacotroneo\Saml2;
 
-use OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Utils as OneLogin_Saml2_Utils;
 use URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,7 +32,7 @@ class Saml2ServiceProvider extends ServiceProvider
         ]);
 
         if (config('saml2_settings.proxyVars', false)) {
-            \OneLogin_Saml2_Utils::setProxyVars(true);
+            OneLogin_Saml2_Utils::setProxyVars(true);
         }
     }
 

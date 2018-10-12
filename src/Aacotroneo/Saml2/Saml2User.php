@@ -2,7 +2,7 @@
 
 namespace Aacotroneo\Saml2;
 
-use OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
 
 /**
  * A simple class that represents the user that 'came' inside the saml2 assertion

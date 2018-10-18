@@ -1,9 +1,10 @@
 <?php
+
 namespace Aacotroneo\Saml2;
 
-use OneLogin_Saml2_Auth;
-use URL;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use OneLogin_Saml2_Auth;
 
 class Saml2ServiceProvider extends ServiceProvider
 {
@@ -22,16 +23,18 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if(config('saml2_settings.useRoutes', false) == true ){
-            include __DIR__ . '/../../routes.php';
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../../config/saml2_settings.php' => config_path('saml2_settings.php'),
+            ]);
         }
 
-        $this->publishes([
-            __DIR__.'/../../config/saml2_settings.php' => config_path('saml2_settings.php'),
-        ]);
+        if (config('saml2_settings.useRoutes', false)){
+            include __DIR__ . '/routes.php';
+        }
 
         if (config('saml2_settings.proxyVars', false)) {
-            \OneLogin_Saml2_Utils::setProxyVars(true);
+            OneLogin_Saml2_Utils::setProxyVars(true);
         }
     }
 
@@ -44,16 +47,15 @@ class Saml2ServiceProvider extends ServiceProvider
     {
         $this->registerOneLoginInContainer();
 
-        $this->app->singleton('Aacotroneo\Saml2\Saml2Auth', function ($app) {
-
-            return new \Aacotroneo\Saml2\Saml2Auth($app['OneLogin_Saml2_Auth']);
+        $this->app->singleton(Saml2Auth::class, function ($app) {
+            return new Saml2Auth($app['OneLogin_Saml2_Auth']);
         });
 
     }
 
     protected function registerOneLoginInContainer()
     {
-        $this->app->singleton('OneLogin_Saml2_Auth', function ($app) {
+        $this->app->singleton(OneLogin_Saml2_Auth::class, function ($app) {
             $config = config('saml2_settings');
             if (empty($config['sp']['entityId'])) {
                 $config['sp']['entityId'] = URL::route('saml_metadata');
@@ -77,16 +79,6 @@ class Saml2ServiceProvider extends ServiceProvider
 
             return new OneLogin_Saml2_Auth($config);
         });
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return array();
     }
 
     protected function extractPkeyFromFile($path) {
@@ -115,4 +107,5 @@ class Saml2ServiceProvider extends ServiceProvider
         preg_match($regex, $keyString, $matches);
         return empty($matches[1]) ? '' : $matches[1];
     }
+
 }

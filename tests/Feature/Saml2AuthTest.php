@@ -1,20 +1,18 @@
 <?php
 
-namespace Aacotroneo\Saml2;
+namespace Aacotroneo\Saml2\Tests\Integration;
 
-
-use App;
+use Aacotroneo\Saml2\Saml2Auth;
 use Mockery as m;
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
-class Saml2AuthTest extends \PHPUnit_Framework_TestCase
+class Saml2AuthTest extends PHPUnitTestCase
 {
-
 
     public function tearDown()
     {
         m::close();
     }
-
 
     public function testIsAuthenticated()
     {

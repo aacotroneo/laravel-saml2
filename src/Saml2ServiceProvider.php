@@ -4,7 +4,8 @@ namespace Aacotroneo\Saml2;
 
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
-use OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Utils;
+use OneLogin\Saml2\Auth;
 
 class Saml2ServiceProvider extends ServiceProvider
 {
@@ -30,11 +31,11 @@ class Saml2ServiceProvider extends ServiceProvider
         }
 
         if (config('saml2_settings.useRoutes', false)){
-            include __DIR__ . '/routes.php';
+            $this->loadRoutesFrom(__DIR__.'/routes.php');
         }
 
         if (config('saml2_settings.proxyVars', false)) {
-            OneLogin_Saml2_Utils::setProxyVars(true);
+            Utils::setProxyVars(true);
         }
     }
 
@@ -48,14 +49,14 @@ class Saml2ServiceProvider extends ServiceProvider
         $this->registerOneLoginInContainer();
 
         $this->app->singleton(Saml2Auth::class, function ($app) {
-            return new Saml2Auth($app['OneLogin_Saml2_Auth']);
+            return new Saml2Auth($app['OneLogin\Saml2\Auth']);
         });
 
     }
 
     protected function registerOneLoginInContainer()
     {
-        $this->app->singleton(OneLogin_Saml2_Auth::class, function ($app) {
+        $this->app->singleton(Auth::class, function ($app) {
             $config = config('saml2_settings');
             if (empty($config['sp']['entityId'])) {
                 $config['sp']['entityId'] = URL::route('saml_metadata');
@@ -77,14 +78,14 @@ class Saml2ServiceProvider extends ServiceProvider
                 $config['idp']['x509cert'] = $this->extractCertFromFile($config['idp']['x509cert']);
             }
 
-            return new OneLogin_Saml2_Auth($config);
+            return new Auth($config);
         });
     }
 
     protected function extractPkeyFromFile($path) {
         $res = openssl_get_privatekey($path);
         if (empty($res)) {
-            throw new \Exception('Could not read private key-file at path \'' . $path . '\'');
+            throw new Exception('Could not read private key-file at path \'' . $path . '\'');
         }
         openssl_pkey_export($res, $pkey);
         openssl_pkey_free($res);
@@ -94,7 +95,7 @@ class Saml2ServiceProvider extends ServiceProvider
     protected function extractCertFromFile($path) {
         $res = openssl_x509_read(file_get_contents($path));
         if (empty($res)) {
-            throw new \Exception('Could not read X509 certificate-file at path \'' . $path . '\'');
+            throw new Exception('Could not read X509 certificate-file at path \'' . $path . '\'');
         }
         openssl_x509_export($res, $cert);
         openssl_x509_free($res);

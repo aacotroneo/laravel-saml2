@@ -51,6 +51,16 @@ class Saml2User
 
         return $auth->getAttribute($name);
     }
+    
+    /**
+     * @return array attributes retrieved from assertion processed this request
+     */
+    function getAttributesWithFriendlyName()
+    {
+        $auth = $this->auth;
+
+        return $auth->getAttributesWithFriendlyName();
+    }
 
     /**
      * @return string the saml assertion processed this request

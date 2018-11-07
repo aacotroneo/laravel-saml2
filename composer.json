@@ -4,7 +4,7 @@
     "keywords": ["laravel","saml", "saml2", "onelogin"],
     "homepage": "https://github.com/aacotroneo/laravel-saml2",
     "license": "MIT",
-    "version": "0.11.1",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "aacotroneo",

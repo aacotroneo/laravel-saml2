@@ -17,7 +17,7 @@ You can install the package via composer:
 composer require aacotroneo/laravel-saml2
 ```
 
-Then publish the config file with `php artisan vendor:publish`. This will add the file `app/config/saml2_settings.php`. This config is handled almost directly by  [OneLogin](https://github.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary. There are some other config about routes you may want to check, they are pretty straightforward.
+Then publish the config file with `php artisan vendor:publish --provider="Aacotroneo\Saml2\Saml2ServiceProvider`. This will add the file `app/config/saml2_settings.php`. This config is handled almost directly by  [OneLogin](https://g ithub.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary. There are some other config about routes you may want to check, they are pretty straightforward.
 
 ### Configuration
 

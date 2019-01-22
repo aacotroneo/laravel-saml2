@@ -66,7 +66,7 @@ class Saml2Controller extends Controller
 
     /**
      * Process an incoming saml2 logout request.
-     * Fires 'saml2.logoutRequestReceived' event if its valid.
+     * Fires 'Saml2LogoutEvent' event if its valid.
      * This means the user logged out of the SSO infrastructure, you 'should' log him out locally too.
      */
     public function sls()

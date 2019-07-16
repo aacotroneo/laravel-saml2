@@ -3,7 +3,7 @@
 foreach (config('saml2_settings.idpNames') as $key => $value) {
    
     Route::group([
-        'prefix' => $value,
+        'prefix' => config('saml2_settings.routesPrefix').'/'.$value,
         'middleware' => config('saml2_settings.routesMiddleware'),
     ], function () use ($value) {
         

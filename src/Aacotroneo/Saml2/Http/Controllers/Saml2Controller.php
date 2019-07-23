@@ -19,39 +19,16 @@ class Saml2Controller extends Controller
     /**
      * @param Saml2Auth $saml2Auth injected.
      */
-    function __construct(Request $request){
+    function __construct($idpName){
+        if (empty($idpName)) {
+            // Get IDP name from path. IdP name is *2nd-to-last* item in path, whether
+            // using routesPrefix ("routesPrefix/idpName/page") or no routesPrefix ("idpName/page")
+            $pathSegments = request()->segments();
+            $idpName = $pathSegments[count($pathSegments)-2];
+        }
+        $this->idp = $idpName ?: 'test';
 
-        // IdP name is *2nd-to-last* item in path, whether no routesPrefix ("idpName/page") or using routesPrefix ("routesPrefix/idpName/page")
-        $pathSegments = $request->segments();
-        $this->idp = $pathSegments[count($pathSegments)-2];
-        if (!$this->idp) {
-            $this->idp = 'test';
-        }
-
-        $config = config('saml2.'.$this->idp.'_idp_settings');
-
-        if (empty($config['sp']['entityId'])) {
-            $config['sp']['entityId'] = URL::route($this->idp.'_metadata');
-        }
-        if (empty($config['sp']['assertionConsumerService']['url'])) {
-            $config['sp']['assertionConsumerService']['url'] = URL::route($this->idp.'_acs');
-        }
-        if (!empty($config['sp']['singleLogoutService']) &&
-            empty($config['sp']['singleLogoutService']['url'])) {
-            $config['sp']['singleLogoutService']['url'] = URL::route($this->idp.'_sls');
-        }
-        if (strpos($config['sp']['privateKey'], 'file://')===0) {
-            $config['sp']['privateKey'] = $this->extractPkeyFromFile($config['sp']['privateKey']);
-        }
-        if (strpos($config['sp']['x509cert'], 'file://')===0) {
-            $config['sp']['x509cert'] = $this->extractCertFromFile($config['sp']['x509cert']);
-        }
-        if (strpos($config['idp']['x509cert'], 'file://')===0) {
-            $config['idp']['x509cert'] = $this->extractCertFromFile($config['idp']['x509cert']);
-        }
-
-        $auth = new OneLogin_Saml2_Auth($config);
-
+        $auth = Saml2Auth::loadOneLoginAuthFromIpdConfig($this->idp);
         $this->saml2Auth = new Saml2Auth($auth);
     }
 
@@ -133,32 +110,5 @@ class Saml2Controller extends Controller
     public function login()
     {
         $this->saml2Auth->login(config('saml2_settings.loginRoute'));
-    }
-
-    protected function extractPkeyFromFile($path) {
-        $res = openssl_get_privatekey($path);
-        if (empty($res)) {
-            throw new \Exception('Could not read private key-file at path \'' . $path . '\'');
-        }
-        openssl_pkey_export($res, $pkey);
-        openssl_pkey_free($res);
-        return $this->extractOpensslString($pkey, 'PRIVATE KEY');
-    }
-
-    protected function extractCertFromFile($path) {
-        $res = openssl_x509_read(file_get_contents($path));
-        if (empty($res)) {
-            throw new \Exception('Could not read X509 certificate-file at path \'' . $path . '\'');
-        }
-        openssl_x509_export($res, $cert);
-        openssl_x509_free($res);
-        return $this->extractOpensslString($cert, 'CERTIFICATE');
-    }
-
-    protected function extractOpensslString($keyString, $delimiter) {
-        $keyString = str_replace(["\r", "\n"], "", $keyString);
-        $regex = '/-{5}BEGIN(?:\s|\w)+' . $delimiter . '-{5}\s*(.+?)\s*-{5}END(?:\s|\w)+' . $delimiter . '-{5}/m';
-        preg_match($regex, $keyString, $matches);
-        return empty($matches[1]) ? '' : $matches[1];
     }
 }

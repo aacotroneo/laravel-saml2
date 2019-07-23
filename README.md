@@ -121,7 +121,27 @@ protected function unauthenticated($request, AuthenticationException $exception)
 }
 ```
 
-The $saml2Controller->login('/my/redirect/path') will redirect the user to the IDP and will came back to an endpoint the library serves at /myidp1/acs (or routesPrefix/myidp1/acs). That will process the response and fire an event when ready. The next step for you is to handle that event. You just need to login the user or refuse.
+For login requests that come through redirects to the login route, 'routesPrefix/myidp1/login', the default login call does not pass a redirect URL to the Saml login request. That login argument is useful because the ACS handler can gets that value (passed back from the IDP as RelayPath) and by default will redirect there. To pass the redirect URL from the controller login, extend the Saml2Controller class and implement your own `login()` function. Set the saml2_settings value `saml2_controller` to be your extended class so that the routes will direct requests to your controller instead of the default.  
+E.g.  
+**saml_settings.php**
+```
+    'saml2_controller' => 'App\Http\Controllers\MyNamespace\MySaml2Controller'
+```
+**MySaml2Controller.php**
+```php
+use Aacotroneo\Saml2\Http\Controllers\Saml2Controller;
+
+class MySaml2Controller extends Saml2Controller
+{
+    public function login()
+    {
+        $loginRedirect = '...'; // Determine redirect URL
+        $this->saml2Auth->login($loginRedirect);
+    }
+}
+```
+
+The login('/my/redirect/path') will redirect the user to the IDP and will came back to an endpoint the library serves at /myidp1/acs (or routesPrefix/myidp1/acs). That will process the response and fire an event when ready. The next step for you is to handle that event. You just need to login the user or refuse.
 
 ```php
 

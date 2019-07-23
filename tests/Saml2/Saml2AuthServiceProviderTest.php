@@ -10,8 +10,7 @@ use PHPUnit\Framework\TestCase;
 class Saml2AuthServiceProviderTest extends TestCase
 {
 
-
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
     }

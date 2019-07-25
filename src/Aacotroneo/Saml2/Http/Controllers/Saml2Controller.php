@@ -6,21 +6,28 @@ use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-
+use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
+use URL;
 
 class Saml2Controller extends Controller
 {
 
     protected $saml2Auth;
 
-    /**
-     * @param Saml2Auth $saml2Auth injected.
-     */
-    function __construct(Saml2Auth $saml2Auth)
-    {
-        $this->saml2Auth = $saml2Auth;
-    }
+    protected $idp;
 
+    /**
+     */
+    function __construct(){
+        $idpName = request()->route('idpName');
+        if (!in_array($idpName, config('saml2_settings.idpNames'))) {
+            abort(404);
+        }
+
+        $this->idp = $idpName;
+        $auth = Saml2Auth::loadOneLoginAuthFromIpdConfig($this->idp);
+        $this->saml2Auth = new Saml2Auth($auth);
+    }
 
     /**
      * Generate local sp metadata
@@ -52,7 +59,7 @@ class Saml2Controller extends Controller
         }
         $user = $this->saml2Auth->getSaml2User();
 
-        event(new Saml2LoginEvent($user, $this->saml2Auth));
+        event(new Saml2LoginEvent($this->idp, $user, $this->saml2Auth));
 
         $redirectUrl = $user->getIntendedUrl();
 
@@ -71,8 +78,10 @@ class Saml2Controller extends Controller
      */
     public function sls()
     {
-        $error = $this->saml2Auth->sls(config('saml2_settings.retrieveParametersFromServer'));
-        if (!empty($error)) {
+        $errors = $this->saml2Auth->sls($this->idp, config('saml2_settings.retrieveParametersFromServer'));
+        if (!empty($errors)) {
+            logger()->error('Saml2 error', $errors);
+            session()->flash('saml2_error', $errors);
             throw new \Exception("Could not log out");
         }
 
@@ -99,5 +108,4 @@ class Saml2Controller extends Controller
     {
         $this->saml2Auth->login(config('saml2_settings.loginRoute'));
     }
-
 }

@@ -44,14 +44,14 @@ class Saml2Auth
         $config = config('saml2.'.$idpName.'_idp_settings');
 
         if (empty($config['sp']['entityId'])) {
-            $config['sp']['entityId'] = URL::route($idpName.'_metadata');
+            $config['sp']['entityId'] = URL::route('saml2_metadata', $idpName);
         }
         if (empty($config['sp']['assertionConsumerService']['url'])) {
-            $config['sp']['assertionConsumerService']['url'] = URL::route($idpName.'_acs');
+            $config['sp']['assertionConsumerService']['url'] = URL::route('saml2_acs', $idpName);
         }
         if (!empty($config['sp']['singleLogoutService']) &&
             empty($config['sp']['singleLogoutService']['url'])) {
-            $config['sp']['singleLogoutService']['url'] = URL::route($idpName.'_sls');
+            $config['sp']['singleLogoutService']['url'] = URL::route('saml2_sls', $idpName);
         }
         if (strpos($config['sp']['privateKey'], 'file://')===0) {
             $config['sp']['privateKey'] = $this->extractPkeyFromFile($config['sp']['privateKey']);

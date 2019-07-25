@@ -86,7 +86,7 @@ $metadata['http://laravel_url/myidp1/metadata'] = array(
 
 ### Usage
 
-When you want your user to login, just redirect to the login route configured for the particular IDP, `route('myIdp1_login')`. You can also instantiate a `Saml2Auth` for the desired IDP using the `Saml2Auth::loadOneLoginAuthFromIpdConfig()` function to load the config and construct the OneLogin auth argment; just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP whether the user is already logged in or not. For example, you can change your authentication middleware.
+When you want your user to login, just redirect to the login route configured for the particular IDP, `route('saml2_login', 'myIdp1')`. You can also instantiate a `Saml2Auth` for the desired IDP using the `Saml2Auth::loadOneLoginAuthFromIpdConfig('myIdp1')` function to load the config and construct the OneLogin auth argment; just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP whether the user is already logged in or not. For example, you can change your authentication middleware.
 ```php
 public function handle($request, Closure $next)
 {

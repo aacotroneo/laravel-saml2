@@ -17,17 +17,14 @@ class Saml2Controller extends Controller
     protected $idp;
 
     /**
-     * @param Saml2Auth $saml2Auth injected.
      */
-    function __construct($idpName){
-        if (empty($idpName)) {
-            // Get IDP name from path. IdP name is *2nd-to-last* item in path, whether
-            // using routesPrefix ("routesPrefix/idpName/page") or no routesPrefix ("idpName/page")
-            $pathSegments = request()->segments();
-            $idpName = $pathSegments[count($pathSegments)-2];
+    function __construct(){
+        $idpName = request()->route('idpName');
+        if (!in_array($idpName, config('saml2_settings.idpNames'))) {
+            abort(404);
         }
-        $this->idp = $idpName ?: 'test';
 
+        $this->idp = $idpName;
         $auth = Saml2Auth::loadOneLoginAuthFromIpdConfig($this->idp);
         $this->saml2Auth = new Saml2Auth($auth);
     }

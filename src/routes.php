@@ -1,36 +1,31 @@
 <?php
 
-foreach (config('saml2_settings.idpNames') as $key => $value) {
-   
-    Route::group([
-        'prefix' => config('saml2_settings.routesPrefix').'/'.$value,
-        'middleware' => config('saml2_settings.routesMiddleware'),
-    ], function () use ($value) {
-        
+Route::middleware(config('saml2_settings.routesMiddleware'))
+->prefix(config('saml2_settings.routesPrefix').'/')->group(function() {
+    Route::prefix('{idpName}')->group(function() {
         Route::get('/logout', array(
-            'as' => $value.'_logout',
+            'as' => 'saml2_logout',
             'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@logout',
         ));
 
         Route::get('/login', array(
-            'as' => $value.'_login',
+            'as' => 'saml2_login',
             'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@login',
         ));
 
         Route::get('/metadata', array(
-            'as' => $value.'_metadata',
+            'as' => 'saml2_metadata',
             'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@metadata',
         ));
 
         Route::post('/acs', array(
-            'as' => $value.'_acs',
+            'as' => 'saml2_acs',
             'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@acs',
         ));
 
         Route::get('/sls', array(
-            'as' => $value.'_sls',
+            'as' => 'saml2_sls',
             'uses' => 'Aacotroneo\Saml2\Http\Controllers\Saml2Controller@sls',
         ));
     });
-
-}
+});

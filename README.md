@@ -6,7 +6,6 @@ A Laravel package for Saml2 integration as a SP (service provider) based on  [On
 
 The aim of this library is to be as simple as possible. We won't mess with Laravel users, auth, session...  We prefer to limit ourselves to a concrete task. Ask the user to authenticate at the IDP and process the response. Same case for SLO requests.
 
-
 ## Installation - Composer
 
 You can install the package via composer:

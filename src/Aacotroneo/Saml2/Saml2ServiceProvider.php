@@ -1,9 +1,7 @@
 <?php
 namespace Aacotroneo\Saml2;
 
-use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
 use OneLogin\Saml2\Utils as OneLogin_Saml2_Utils;
-use URL;
 use Illuminate\Support\ServiceProvider;
 
 class Saml2ServiceProvider extends ServiceProvider
@@ -44,6 +42,11 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton(Saml2Auth::class, function ($app) {
+            $idpName = $app->request->route('idpName');
+            $auth = Saml2Auth::loadOneLoginAuthFromIpdConfig($idpName);
+            return new Saml2Auth($auth);
+        });
     }
 
     /**
@@ -53,7 +56,7 @@ class Saml2ServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array();
+        return [Saml2Auth::class];
     }
 
 }

@@ -82,6 +82,26 @@ return $settings = array(
          *  (openssl x509 -noout -fingerprint -in "idp.crt" to generate it)
          */
         // 'certFingerprint' => '',
+
+        /**
+         * (Optional) Enable Multi-Cert signing/encryption
+         * In some scenarios the IdP uses different certificates for
+         * signing/encryption, or is under key rollover phase and
+         * more than one certificate is published on IdP metadata.
+         * In order to handle that the toolkit offers that parameter.
+         * (when used, 'x509cert' and 'certFingerprint' values are
+         * ignored).
+         */
+
+        //'x509certMulti'=>array(
+        //    'signing'=>array(
+        //      0=>env('SAML2_'.$this_idp_env_id.'_IDP_x509_SIGNING_0',''),
+        //    ),
+        //    'encryption'=>array(
+        //      0=>env('SAML2_'.$this_idp_env_id.'_IDP_x509_ENCRYPTION_0',''),
+        //    ),
+        //  ),
+
     ),
 
 

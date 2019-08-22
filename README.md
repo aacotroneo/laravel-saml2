@@ -56,16 +56,10 @@ The only real difference between this config and the one that OneLogin uses, is 
 
 If you don't specify URLs in the corresponding IDP config optional values, this library provides defaults values. The library creates the `metadata`, `acs`, and `sls` routes for each IDP. If you specify different values in the config, note that the `acs` and `sls` URLs should correspond to actual routes that you set up that are directed to the corresponding Saml2Controller function.
 
-The routes automatically created by the library for each IDP are:
-- `{routesPrefix}/{idpName}/logout`
-- `{routesPrefix}/{idpName}/login`
-- `{routesPrefix}/{idpName}/metadata`
-- `{routesPrefix}/{idpName}/acs`
-- `{routesPrefix}/{idpName}/sls`
-
-If you want to optionally define values in ENV vars instead of the {idpName}_idp_settings file, you'll see in there that there is a naming pattern you can follow for ENV values. For example, if in `mytestipd1_idp_settings.php` you set `$this_idp_env_id = 'mytestidp1';`, and in `myidp2_idp_settings.php` you set `$this_idp_env_id = 'myidp2'`, then you can set ENV vars starting with `SAML2_mytestidp1_` and `SAML2_myidp2_` respectively.
+If you want to optionally define values in ENV vars instead of the `{idpName}_idp_settings` file, you'll see in there that there is a naming pattern you can follow for ENV values. For example, if in `mytestipd1_idp_settings.php` you set `$this_idp_env_id = 'mytestidp1';`, and in `myidp2_idp_settings.php` you set `$this_idp_env_id = 'myidp2'`, then you can set ENV vars starting with `SAML2_mytestidp1_` and `SAML2_myidp2_` respectively.
 
 For example, it can be:
+
 **.env**
 ```env
 SAML2_mytestidp1_SP_x509="..."
@@ -84,10 +78,18 @@ You can check the actual routes in the metadata, by navigating to `http(s)://{la
 
 If you configure the optional `routesPrefix` setting in `saml2_settings.php`, then all idp routes will be prefixed by that value, so you'll need to adjust the metadata url accordingly. For example, if you configure `routesPrefix` to be `'single_sign_on'`, then your IDP metadata for `mytestidp1` will be found at `http(s)://{laravel_url}/single_sign_on/mytestidp1/metadata`.
 
+The routes automatically created by the library for each IDP are:
+- `{routesPrefix}/{idpName}/logout`
+- `{routesPrefix}/{idpName}/login`
+- `{routesPrefix}/{idpName}/metadata`
+- `{routesPrefix}/{idpName}/acs`
+- `{routesPrefix}/{idpName}/sls`
+
 #### Example: simplesamlphp IDP configuration
 If you use simplesamlphp as a test IDP, and your SP metadata url is `http(s)://{laravel_url}/mytestidp1/metadata`, add the following to `/metadata/sp-remote.php` to inform the IDP of your laravel-saml2 SP identity.
 
 For example, it can be:
+
 **/metadata/sp-remote.php**
 ```php
 $metadata['http(s)://{laravel_url}/mytestidp1/metadata'] = array(
@@ -104,6 +106,7 @@ $metadata['http(s)://{laravel_url}/mytestidp1/metadata'] = array(
 When you want your user to login, just redirect to the login route configured for the particular IDP, `route('saml2_login', 'mytestidp1')`. You can also instantiate a `Saml2Auth` for the desired IDP using the `Saml2Auth::loadOneLoginAuthFromIpdConfig('mytestidp1')` function to load the config and construct the OneLogin auth argment; just remember that it does not use any session storage, so if you ask it to login it will redirect to the IDP whether the user is already logged in or not. For example, you can change your authentication middleware.
 
 For example, it can be:
+
 **App/Http/Middleware/RedirectIfAuthenticated.php**
 ```php
 public function handle($request, Closure $next)
@@ -128,6 +131,7 @@ public function handle($request, Closure $next)
 Since Laravel 5.3, you can change your unauthenticated method.
 
 For example, it can be:
+
 **App/Exceptions/Handler.php**
 ```php
 protected function unauthenticated($request, AuthenticationException $exception)
@@ -145,6 +149,7 @@ protected function unauthenticated($request, AuthenticationException $exception)
 For login requests that come through redirects to the login route, `{routesPrefix}/mytestidp1/login`, the default login call does not pass a redirect URL to the Saml login request. That login argument is useful because the ACS handler can gets that value (passed back from the IDP as RelayPath) and by default will redirect there. To pass the redirect URL from the controller login, extend the Saml2Controller class and implement your own `login()` function. Set the `config/saml2_settings.php` value `saml2_controller` to be your extended class so that the routes will direct requests to your controller instead of the default.  
 
 For example, it can be:
+
 **config/saml_settings.php**
 ```
     'saml2_controller' => 'App\Http\Controllers\MyNamespace\MySaml2Controller'
@@ -188,6 +193,7 @@ Event::listen('Aacotroneo\Saml2\Events\Saml2LoginEvent', function (Saml2LoginEve
 Be careful about necessary Laravel middleware for Auth persistence in Session.
 
 For example, it can be:
+
 **App/Http/Kerel.php**
 ```php
 protected $middlewareGroups = [
@@ -224,6 +230,7 @@ For case 2, you will only receive the event. Both cases 1 and 2 receive the same
 Note that for case 2, you may have to manually save your session to make the logout stick (as the session is saved by middleware, but the OneLogin library will redirect back to your IDP before that happens)
 
 For example, it can be:
+
 **App/Providers/MyEventServiceProvider.php**
 ```php
 Event::listen('Aacotroneo\Saml2\Events\Saml2LogoutEvent', function ($event) {

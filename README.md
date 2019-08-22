@@ -171,6 +171,7 @@ class MySaml2Controller extends Saml2Controller
 After login is called, the user will be redirected to the IDP login page. Then the IDP, which you have configured with an endpoint the library serves, will call back, e.g. `/mytestidp1/acs` or `/{routesPrefix}/mytestidp1/acs`. That will process the response and fire an event when ready. The next step for you is to handle that event. You just need to login the user or refuse.
 
 For example, it can be:
+
 **App/Providers/MyEventServiceProvider.php**
 ```php
 Event::listen('Aacotroneo\Saml2\Events\Saml2LoginEvent', function (Saml2LoginEvent $event) {

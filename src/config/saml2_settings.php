@@ -61,11 +61,11 @@ return $settings = array(
     'proxyVars' => false,
 
     /**
-     * (Optiona) Which class implements the route functions.
-     * If left blank, defaults to this lib's controller (Aacotroneo\Saml2\Http\Controllers\Saml2Controller).
+     * (Optional) Which class implements the route functions.
+     * If commented out, defaults to this lib's controller (Aacotroneo\Saml2\Http\Controllers\Saml2Controller).
      * If you need to extend Saml2Controller (e.g. to override the `login()` function to pass
      * a `$returnTo` argument), this value allows you to pass your own controller, and have
      * it used in the routes definition.
      */
-    'saml2_controller' => '',
+     // 'saml2_controller' => '',
 );

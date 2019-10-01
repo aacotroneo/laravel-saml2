@@ -197,9 +197,9 @@ Now there are two ways the user can log out.
  + 1 - By logging out in your app: In this case you 'should' notify the IDP first so it closes global session.
  + 2 - By logging out of the global SSO Session. In this case the IDP will notify you on /myidp1/slo endpoint (already provided), if the IDP supports SLO
 
-For case 1 call `Saml2Auth::logout();` or redirect the user to the logout route, e.g. 'myidp1_logout' which does just that. Do not close the session immediately as you need to receive a response confirmation from the IDP (redirection). That response will be handled by the library at /myidp1/sls and will fire an event for you to complete the operation.
+For case 1, initiate a logout by redirecting the user to the saml2_logout route (`route('saml2_logout', 'myidp1')`). Do not close the session immediately as you need to receive a response confirmation from the IDP (redirection). That response will be handled by the library at the `sls` route, and it will fire a `Saml2LogoutEvent` event that you can use to complete the logout in the same way as with case 2 below.
 
-For case 2 you will only receive the event. Both cases 1 and 2 receive the same event. 
+For case 2 you will only receive the event. Both cases 1 and 2 receive the same `Saml2LogoutEvent` event. 
 
 Note that for case 2, you may have to manually save your session to make the logout stick (as the session is saved by middleware, but the OneLogin library will redirect back to your IDP before that happens)
 

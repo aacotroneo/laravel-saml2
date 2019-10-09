@@ -40,6 +40,10 @@ class Saml2Auth
             throw new \InvalidArgumentException("IDP name required.");
         }
 
+        if (is_null(config('saml2.' . $idpName . '_idp_settings'))) {
+            throw new \InvalidArgumentException('"' . $idpName . '" is not a valid IdP.');
+        }
+
         $config = config('saml2.'.$idpName.'_idp_settings');
 
         if (empty($config['sp']['entityId'])) {

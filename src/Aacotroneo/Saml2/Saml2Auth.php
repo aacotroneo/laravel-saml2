@@ -40,11 +40,11 @@ class Saml2Auth
             throw new \InvalidArgumentException("IDP name required.");
         }
 
-        if (is_null(config('saml2.' . $idpName . '_idp_settings'))) {
+        $config = config('saml2.'.$idpName.'_idp_settings');
+
+        if (is_null($config)) {
             throw new \InvalidArgumentException('"' . $idpName . '" is not a valid IdP.');
         }
-
-        $config = config('saml2.'.$idpName.'_idp_settings');
 
         if (empty($config['sp']['entityId'])) {
             $config['sp']['entityId'] = URL::route('saml2_metadata', $idpName);

@@ -47,7 +47,7 @@ Define names of all the IDPs you want to configure in saml2_settings.php. Option
 
 You will need to create a separate configuration file for each IDP under `app/config/saml2/` folder. e.g. `myidp1_idp_settings.php`. You can use `test_idp_settings.php` as the starting point; just copy it and rename it.
 
-Configuration options are note explained in this project as they come from the [OneLogin project](https://github.com/onelogin/php-saml), please refer there for details.
+Configuration options are not explained in this project as they come from the [OneLogin project](https://github.com/onelogin/php-saml), please refer there for details.
 
 The only real difference between this config and the one that OneLogin uses, is that the SP entityId, assertionConsumerService url and singleLogoutService URL are injected by the library. If you don't specify those URLs in the corresponding IDP config optional values, this library provides defaults values: the metadata, acs, and sls routes that this library creates for each IDP. If specify different values in the config, note that the acs and sls URLs should correspond to actual routes that you set up that are directed to the corresponding Saml2Controller function.
 

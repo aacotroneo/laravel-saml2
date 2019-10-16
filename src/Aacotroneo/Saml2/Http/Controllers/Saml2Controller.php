@@ -6,60 +6,45 @@ use Aacotroneo\Saml2\Events\Saml2LoginEvent;
 use Aacotroneo\Saml2\Saml2Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
-use URL;
 
 class Saml2Controller extends Controller
 {
-
-    protected $saml2Auth;
-
-    protected $idp;
-
     /**
-     */
-    function __construct(){
-        $idpName = request()->route('idpName');
-        if (!in_array($idpName, config('saml2_settings.idpNames'))) {
-            abort(404);
-        }
-
-        $this->idp = $idpName;
-        $auth = Saml2Auth::loadOneLoginAuthFromIpdConfig($this->idp);
-        $this->saml2Auth = new Saml2Auth($auth);
-    }
-
-    /**
-     * Generate local sp metadata
+     * Generate local sp metadata.
+     *
+     * @param Saml2Auth $saml2Auth
      * @return \Illuminate\Http\Response
      */
-    public function metadata()
+    public function metadata(Saml2Auth $saml2Auth)
     {
-
-        $metadata = $this->saml2Auth->getMetadata();
+        $metadata = $saml2Auth->getMetadata();
 
         return response($metadata, 200, ['Content-Type' => 'text/xml']);
     }
 
     /**
      * Process an incoming saml2 assertion request.
-     * Fires 'Saml2LoginEvent' event if a valid user is Found
+     * Fires 'Saml2LoginEvent' event if a valid user is found.
+     *
+     * @param Saml2Auth $saml2Auth
+     * @param $idpName
+     * @return \Illuminate\Http\Response
      */
-    public function acs()
+    public function acs(Saml2Auth $saml2Auth, $idpName)
     {
-        $errors = $this->saml2Auth->acs();
+        $errors = $saml2Auth->acs();
 
         if (!empty($errors)) {
-            logger()->error('Saml2 error_detail', ['error' => $this->saml2Auth->getLastErrorReason()]);
-            session()->flash('saml2_error_detail', [$this->saml2Auth->getLastErrorReason()]);
+            logger()->error('Saml2 error_detail', ['error' => $saml2Auth->getLastErrorReason()]);
+            session()->flash('saml2_error_detail', [$saml2Auth->getLastErrorReason()]);
 
             logger()->error('Saml2 error', $errors);
             session()->flash('saml2_error', $errors);
             return redirect(config('saml2_settings.errorRoute'));
         }
-        $user = $this->saml2Auth->getSaml2User();
+        $user = $saml2Auth->getSaml2User();
 
-        event(new Saml2LoginEvent($this->idp, $user, $this->saml2Auth));
+        event(new Saml2LoginEvent($idpName, $user, $saml2Auth));
 
         $redirectUrl = $user->getIntendedUrl();
 
@@ -74,11 +59,15 @@ class Saml2Controller extends Controller
     /**
      * Process an incoming saml2 logout request.
      * Fires 'Saml2LogoutEvent' event if its valid.
-     * This means the user logged out of the SSO infrastructure, you 'should' log him out locally too.
+     * This means the user logged out of the SSO infrastructure, you 'should' log them out locally too.
+     *
+     * @param Saml2Auth $saml2Auth
+     * @param $idpName
+     * @return \Illuminate\Http\Response
      */
-    public function sls()
+    public function sls(Saml2Auth $saml2Auth, $idpName)
     {
-        $errors = $this->saml2Auth->sls($this->idp, config('saml2_settings.retrieveParametersFromServer'));
+        $errors = $saml2Auth->sls($idpName, config('saml2_settings.retrieveParametersFromServer'));
         if (!empty($errors)) {
             logger()->error('Saml2 error', $errors);
             session()->flash('saml2_error', $errors);
@@ -89,23 +78,27 @@ class Saml2Controller extends Controller
     }
 
     /**
-     * This initiates a logout request across all the SSO infrastructure.
+     * Initiate a logout request across all the SSO infrastructure.
+     *
+     * @param Saml2Auth $saml2Auth
+     * @param Request $request
      */
-    public function logout(Request $request)
+    public function logout(Saml2Auth $saml2Auth, Request $request)
     {
         $returnTo = $request->query('returnTo');
         $sessionIndex = $request->query('sessionIndex');
         $nameId = $request->query('nameId');
-        $this->saml2Auth->logout($returnTo, $nameId, $sessionIndex); //will actually end up in the sls endpoint
+        $saml2Auth->logout($returnTo, $nameId, $sessionIndex); //will actually end up in the sls endpoint
         //does not return
     }
 
-
     /**
-     * This initiates a login request
+     * Initiate a login request.
+     *
+     * @param Saml2Auth $saml2Auth
      */
-    public function login()
+    public function login(Saml2Auth $saml2Auth)
     {
-        $this->saml2Auth->login(config('saml2_settings.loginRoute'));
+        $saml2Auth->login(config('saml2_settings.loginRoute'));
     }
 }

@@ -228,6 +228,7 @@ For case 1, call `Saml2Auth::logout();` or redirect the user to the logout route
 
 For case 2, you will only receive the event. Both cases 1 and 2 receive the same event. 
 
+
 Note that for case 2, you may have to manually save your session to make the logout stick (as the session is saved by middleware, but the OneLogin library will redirect back to your IDP before that happens)
 
 For example, it can be:

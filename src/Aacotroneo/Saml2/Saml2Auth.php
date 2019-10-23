@@ -4,7 +4,6 @@ namespace Aacotroneo\Saml2;
 
 use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
 use OneLogin\Saml2\Error as OneLogin_Saml2_Error;
-use OneLogin\Saml2\Utils as OneLogin_Saml2_Utils;
 use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 
 use Log;
@@ -43,6 +42,10 @@ class Saml2Auth
 
         $config = config('saml2.'.$idpName.'_idp_settings');
 
+        if (is_null($config)) {
+            throw new \InvalidArgumentException('"' . $idpName . '" is not a valid IdP.');
+        }
+
         if (empty($config['sp']['entityId'])) {
             $config['sp']['entityId'] = URL::route('saml2_metadata', $idpName);
         }
@@ -54,13 +57,13 @@ class Saml2Auth
             $config['sp']['singleLogoutService']['url'] = URL::route('saml2_sls', $idpName);
         }
         if (strpos($config['sp']['privateKey'], 'file://')===0) {
-            $config['sp']['privateKey'] = $this->extractPkeyFromFile($config['sp']['privateKey']);
+            $config['sp']['privateKey'] = static::extractPkeyFromFile($config['sp']['privateKey']);
         }
         if (strpos($config['sp']['x509cert'], 'file://')===0) {
-            $config['sp']['x509cert'] = $this->extractCertFromFile($config['sp']['x509cert']);
+            $config['sp']['x509cert'] = static::extractCertFromFile($config['sp']['x509cert']);
         }
         if (strpos($config['idp']['x509cert'], 'file://')===0) {
-            $config['idp']['x509cert'] = $this->extractCertFromFile($config['idp']['x509cert']);
+            $config['idp']['x509cert'] = static::extractCertFromFile($config['idp']['x509cert']);
         }
 
         return new OneLogin_Saml2_Auth($config);
@@ -229,7 +232,7 @@ class Saml2Auth
         }
         openssl_pkey_export($res, $pkey);
         openssl_pkey_free($res);
-        return $this->extractOpensslString($pkey, 'PRIVATE KEY');
+        return static::extractOpensslString($pkey, 'PRIVATE KEY');
     }
 
     protected static function extractCertFromFile($path) {
@@ -239,7 +242,7 @@ class Saml2Auth
         }
         openssl_x509_export($res, $cert);
         openssl_x509_free($res);
-        return $this->extractOpensslString($cert, 'CERTIFICATE');
+        return static::extractOpensslString($cert, 'CERTIFICATE');
     }
 
     protected static function extractOpensslString($keyString, $delimiter) {

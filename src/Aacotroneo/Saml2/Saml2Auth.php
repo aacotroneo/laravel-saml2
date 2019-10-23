@@ -62,10 +62,34 @@ class Saml2Auth
         if (strpos($config['sp']['x509cert'], 'file://')===0) {
             $config['sp']['x509cert'] = static::extractCertFromFile($config['sp']['x509cert']);
         }
+        /*
         if (strpos($config['idp']['x509cert'], 'file://')===0) {
             $config['idp']['x509cert'] = static::extractCertFromFile($config['idp']['x509cert']);
+        }*/
+        // ...
+        if (!empty($config['idp']['x509certMulti']['signing'])) {
+          $config['idp']['x509certMulti']['signing'] = array_map(
+            function ($val) {
+              if (strpos($val, "file://") === 0) {
+                return static::extractCertFromFile($val);
+              }
+              return $val;
+            },
+            $config['idp']['x509certMulti']['signing']
+          );
         }
-
+        if (!empty($config['idp']['x509certMulti']['encryption'])) {
+          $config['idp']['x509certMulti']['encryption'] = array_map(
+            function ($val) {
+              if (strpos($val, "file://") === 0) {
+                return static::extractCertFromFile($val);
+              }
+              return $val;
+            },
+            $config['idp']['x509certMulti']['encryption']
+          );
+        }
+        // ...
         return new OneLogin_Saml2_Auth($config);
     }
 

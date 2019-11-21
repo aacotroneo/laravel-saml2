@@ -195,7 +195,7 @@ Be careful about necessary Laravel middleware for Auth persistence in Session.
 
 For example, it can be:
 
-**App/Http/Kerel.php**
+**App/Http/Kernel.php**
 ```php
 protected $middlewareGroups = [
         'web' => [

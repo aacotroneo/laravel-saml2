@@ -44,7 +44,11 @@ class Saml2Controller extends Controller
         }
         $user = $saml2Auth->getSaml2User();
 
-        event(new Saml2LoginEvent($idpName, $user, $saml2Auth));
+        $event = event(new Saml2LoginEvent($idpName, $user, $saml2Auth));
+
+        if ($event->getRedirectUrl() !== null) {
+            return redirect($event->getRedirectUrl());
+        }
 
         $redirectUrl = $user->getIntendedUrl();
 

@@ -40,6 +40,10 @@ class Saml2Auth
             throw new \InvalidArgumentException("IDP name required.");
         }
 
+        if (!in_array($idpName, config('saml2_settings.idpNames', []))) {
+            throw new \InvalidArgumentException("IDP must exist.");
+        }
+
         $config = config('saml2.'.$idpName.'_idp_settings');
 
         if (is_null($config)) {

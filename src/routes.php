@@ -1,5 +1,7 @@
 <?php
 
+Route::pattern('idpName', '(' . implode('|', config('saml2_settings.idpNames')) . ')');
+
 Route::middleware(config('saml2_settings.routesMiddleware'))
 ->prefix(config('saml2_settings.routesPrefix').'/')->group(function() {
     Route::prefix('{idpName}')->group(function() {

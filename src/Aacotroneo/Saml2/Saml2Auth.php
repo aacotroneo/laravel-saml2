@@ -200,7 +200,11 @@ class Saml2Auth
     {
         $auth = $this->auth;
         $settings = $auth->getSettings();
-        $metadata = $settings->getSPMetadata();
+
+        $validUntil = isset($settings->getSPData()['validUntil']) ? $settings->getSPData()['validUntil'] : null;
+        $cacheDuration = isset($settings->getSPData()['cacheDuration']) ? $settings->getSPData()['cacheDuration'] : null;
+
+        $metadata = $settings->getSPMetadata(false, $validUntil, $cacheDuration);
         $errors = $settings->validateMetadata($metadata);
 
         if (empty($errors)) {

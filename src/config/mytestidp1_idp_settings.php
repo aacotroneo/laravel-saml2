@@ -57,6 +57,18 @@ return $settings = array(
             // Leave blank to use the '{idpName}_sls' route, e.g. 'test_sls'
             'url' => '',
         ),
+
+        /*
+         * Metadata's valid time (timestamp format)
+         * Set to null to use OneLogin's default value
+         */
+        'validUntil' => null,
+
+        /*
+         * Duration of the cache in seconds
+         * Set to null to use OneLogin's default value
+         */
+        'cacheDuration' => null,
     ),
 
     // Identity Provider Data that we want connect with our SP

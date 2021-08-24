@@ -28,7 +28,7 @@ class Saml2Auth
     /**
      * Load the IDP config file and construct a OneLogin\Saml2\Auth (aliased here as OneLogin_Saml2_Auth).
      * Pass the returned value to the Saml2Auth constructor.
-     * 
+     *
      * @param string    $idpName        The target IDP name, must correspond to config file 'config/saml2/${idpName}_idp_settings.php'
      * @return OneLogin_Saml2_Auth Contructed OneLogin Saml2 configuration of the requested IDP
      * @throws \InvalidArgumentException if $idpName is empty
@@ -224,14 +224,16 @@ class Saml2Auth
         return $this->auth->getLastErrorReason();
     }
 
-    
+
     protected static function extractPkeyFromFile($path) {
         $res = openssl_get_privatekey($path);
         if (empty($res)) {
             throw new \Exception('Could not read private key-file at path \'' . $path . '\'');
         }
         openssl_pkey_export($res, $pkey);
-        openssl_pkey_free($res);
+        if (PHP_MAJOR_VERSION < 8) {
+            openssl_pkey_free($res);
+        }
         return static::extractOpensslString($pkey, 'PRIVATE KEY');
     }
 
@@ -241,7 +243,9 @@ class Saml2Auth
             throw new \Exception('Could not read X509 certificate-file at path \'' . $path . '\'');
         }
         openssl_x509_export($res, $cert);
-        openssl_x509_free($res);
+        if (PHP_MAJOR_VERSION < 8) {
+            openssl_x509_free($res);
+        }
         return static::extractOpensslString($cert, 'CERTIFICATE');
     }
 

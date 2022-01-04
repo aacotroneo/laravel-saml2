@@ -231,7 +231,9 @@ class Saml2Auth
             throw new \Exception('Could not read private key-file at path \'' . $path . '\'');
         }
         openssl_pkey_export($res, $pkey);
-        openssl_pkey_free($res);
+        if (PHP_MAJOR_VERSION < 8) {
+            openssl_pkey_free($res);
+        }
         return static::extractOpensslString($pkey, 'PRIVATE KEY');
     }
 
@@ -241,7 +243,11 @@ class Saml2Auth
             throw new \Exception('Could not read X509 certificate-file at path \'' . $path . '\'');
         }
         openssl_x509_export($res, $cert);
-        openssl_x509_free($res);
+
+        if (PHP_MAJOR_VERSION < 8) {
+            openssl_x509_free($res);
+        }
+
         return static::extractOpensslString($cert, 'CERTIFICATE');
     }
 

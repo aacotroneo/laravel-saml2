@@ -1,8 +1,8 @@
 {
-    "name": "aacotroneo/laravel-saml2",
+    "name": "willmorrow/laravel-saml2",
     "description": "A Laravel package for Saml2 integration as a SP (service provider) for multiple IdPs, based on OneLogin toolkit which is much more lightweight than simplesamlphp.",
     "keywords": ["laravel","saml", "saml2", "onelogin"],
-    "homepage": "https://github.com/aacotroneo/laravel-saml2",
+    "homepage": "https://github.com/willmorrow/laravel-saml2",
     "license": "MIT",
     "version": "2.1.0",
     "authors": [
@@ -13,6 +13,10 @@
         {
             "name": "Niraj Patkar",
             "email": "niraj@alphonso.in"
+        },
+        {
+            "name": "William Morrow",
+            "email": "will@williammorrow.co.uk"
         }
     ],
     "require": {

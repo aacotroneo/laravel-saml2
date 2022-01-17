@@ -16,7 +16,7 @@ class Saml2Auth
     /**
      * @var \OneLogin_Saml2_Auth
      */
-    public $auth;
+    protected $auth;
 
     protected $samlAssertion;
 
@@ -96,6 +96,12 @@ class Saml2Auth
     {
         return $this->auth->getLastMessageId();
     }
+    
+    function getSessionExpiration()
+    {
+        return $this->auth->getSessionExpiration()
+    }
+    
 
     /**
      * Initiate a saml2 login flow. It will redirect! Before calling this, check if user is

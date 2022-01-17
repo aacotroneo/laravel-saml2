@@ -99,7 +99,7 @@ class Saml2Auth
     
     function getSessionExpiration()
     {
-        return $this->auth->getSessionExpiration()
+        return $this->auth->getSessionExpiration();
     }
     
 

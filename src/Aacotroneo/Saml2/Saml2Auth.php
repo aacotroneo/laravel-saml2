@@ -16,7 +16,7 @@ class Saml2Auth
     /**
      * @var \OneLogin_Saml2_Auth
      */
-    protected $auth;
+    public $auth;
 
     protected $samlAssertion;
 

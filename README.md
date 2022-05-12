@@ -1,3 +1,7 @@
+# *Status*: Not Active
+This project is no longer maintained. I'd be glad to transfer ownership, or otherwise you can easily replace it by some of the many forks (let me know if someone wants to list theirs here, or some oher library). The library itself shouldn't change much, but there are occational changes needed to keep up with Laravel and PHP version updates
+ * https://github.com/24Slides/laravel-saml2
+
 ## Laravel 5 - Saml2
 
 [![Build Status](https://travis-ci.org/aacotroneo/laravel-saml2.svg)](https://travis-ci.org/aacotroneo/laravel-saml2)

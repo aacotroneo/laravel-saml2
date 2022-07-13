@@ -10,6 +10,44 @@ A Laravel package for Saml2 integration as a SP (service provider) based on  [On
 
 The aim of this library is to be as simple as possible. We won't mess with Laravel users, auth, session...  We prefer to limit ourselves to a concrete task. Ask the user to authenticate at the IDP and process the response. Same case for SLO (Single Logout) requests.
 
+## How to upgrade 1.x to 2.x
+* Backup existing `config/saml2_settings.php`
+* Delete existing `config/saml2_settings.php`
+* Edit `config/app.php`:
+```php
+'providers' => [
+        ...
+    	Aacotroneo\Saml2\Saml2ServiceProvider::class,
+]
+```
+* Republish the config files with `php artisan vendor:publish --provider="Aacotroneo\Saml2\Saml2ServiceProvider"`.
+* Edit `app/Http/Middleware/VerifyCsrfToken.php`
+```php
+protected $except = [
+    ...
+    '/saml2/*'
+];
+```
+* Modify `app/Exceptions/Handler.php`
+```php
+protected function unauthenticated($request, AuthenticationException $exception)
+{
+    if ($request->expectsJson())
+    {
+        return response()->json(['error' => 'Unauthenticated.'], 401); // Or, return a response that causes client side js to redirect to '/routesPrefix/myIdp1/login'
+    }
+
+    $saml2Auth = new Saml2Auth(Saml2Auth::loadOneLoginAuthFromIpdConfig('mytestidp1'));
+    return $saml2Auth->login('/my/redirect/path');
+}
+```
+* If you are using only "web" and "api" routeMiddleware's then in your config/saml2_settings.php need to be:
+ ```php
+    ...
+    'routesMiddleware' => ['web'],
+    ...
+ ```
+
 ## Installation - Composer
 
 You can install the package via composer:
